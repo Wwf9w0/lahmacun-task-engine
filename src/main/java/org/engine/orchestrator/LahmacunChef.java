@@ -1,4 +1,8 @@
-package org.engine;
+package org.engine.orchestrator;
+
+import org.engine.engine.LahmacunTask;
+import org.engine.engine.TaskResult;
+import org.engine.engine.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
