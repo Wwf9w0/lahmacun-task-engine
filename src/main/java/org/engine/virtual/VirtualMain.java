@@ -16,7 +16,8 @@ public class VirtualMain {
         VirtualTask<List<Event>> eventTask = virtualFlow.addTask(eventService::eventList);
         VirtualTask<String> stringTask = virtualFlow.addTask(() -> "Hello");
 
-        virtualFlow.waitAll();
+        chef.waitAll();
+        virtualFlow.bakeAll();
         UserProfile profile = profileTask.join();
         List<Event> events = eventTask.join();
         String string = stringTask.join();

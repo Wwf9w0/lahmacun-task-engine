@@ -22,12 +22,4 @@ public class VirtualFlow {
     public List<TaskResult<?>> bakeAll() {
         return chef.run(tasks);
     }
-
-    public void waitAll() {
-        CompletableFuture<?>[] futures = tasks.stream()
-                .map(VirtualTask::future)
-                .toArray(CompletableFuture[]::new);
-
-        CompletableFuture.allOf(futures).join();
-    }
 }

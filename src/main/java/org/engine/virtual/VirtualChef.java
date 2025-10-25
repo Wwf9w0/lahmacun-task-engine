@@ -2,6 +2,7 @@ package org.engine.virtual;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class VirtualChef {
@@ -40,5 +41,9 @@ public class VirtualChef {
             }
         }
         return results;
+    }
+
+    public void waitAll(CompletableFuture<?>... futures) {
+        oven.waitAll(futures);
     }
 }
