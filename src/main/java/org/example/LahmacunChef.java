@@ -12,22 +12,33 @@ public final class LahmacunChef {
         this.oven = oven;
     }
 
-    public Future<Object> submit(Callable<Object> callable) {
-        return oven.executor().submit(callable);
+    public Future<TaskResult<?>> submit(LahmacunTask<?> task) {
+        return oven.executor().submit(() -> {
+            long start = System.currentTimeMillis();
+            try {
+                Object result = task.call();
+                long duration = System.currentTimeMillis() - start;
+                return new TaskResult<>(task.name(), TaskStatus.SUCCESS, result, null, duration);
+            } catch (Exception e) {
+                long duration = System.currentTimeMillis() - start;
+                return new TaskResult<>(task.name(), TaskStatus.FAILED, e, null, duration);
+            }
+        });
     }
 
-    public List<Object> run(List<LahmacunTask<?>> tasks) {
-        List<Future<Object>> futures = new ArrayList<>();
+    public List<TaskResult<?>> run(List<LahmacunTask<?>> tasks) {
+        List<Future<TaskResult<?>>> futures = new ArrayList<>();
         for (LahmacunTask<?> task : tasks) {
-            futures.add(this.submit(() -> task.call()));
+            futures.add(this.submit(task));
         }
 
-        List<Object> results = new ArrayList<>();
-        for (Future<Object> f : futures) {
+        List<TaskResult<?>> results = new ArrayList<>();
+        for (Future<TaskResult<?>> f : futures) {
             try {
                 results.add(f.get());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                results.add(new TaskResult<>("unknown-task", TaskStatus.FAILED, null, e, 0));
             }
         }
         return results;

@@ -3,9 +3,9 @@ package org.example;
 import java.util.concurrent.Callable;
 
 @FunctionalInterface
-public interface LahmacunTask<R> extends Callable<R> {
+public interface LahmacunTask<T> extends Callable<T> {
 
-    R call();
+    T call();
 
     default String name() {
         return this.getClass().getSimpleName();

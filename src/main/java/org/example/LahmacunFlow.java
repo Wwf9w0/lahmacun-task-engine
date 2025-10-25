@@ -16,7 +16,7 @@ public class LahmacunFlow {
         return this;
     }
 
-    public List<Object> bakeAll() {
+    public List<TaskResult<?>> bakeAll() {
         return chef.run(this.tasks);
     }
 }
