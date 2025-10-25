@@ -21,6 +21,8 @@ public final class LahmacunChef {
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - start;
                 return new TaskResult<>(task.name(), TaskStatus.FAILED, e, null, duration);
+            } finally {
+                oven.shutdown();
             }
         });
     }
