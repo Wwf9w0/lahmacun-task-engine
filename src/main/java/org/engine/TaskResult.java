@@ -1,4 +1,4 @@
-package org.example;
+package org.engine;
 
 public final class TaskResult<T> {
     private final String name;

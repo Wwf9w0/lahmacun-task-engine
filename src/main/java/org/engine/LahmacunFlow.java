@@ -1,4 +1,4 @@
-package org.example;
+package org.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class LahmacunFlow {
         return this;
     }
 
-    public List<Object> bakeAll() {
+    public List<TaskResult<?>> bakeAll() {
         return chef.run(this.tasks);
     }
 }

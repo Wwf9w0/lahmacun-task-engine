@@ -1,4 +1,4 @@
-package org.example;
+package org.engine;
 
 import java.util.List;
 
@@ -12,8 +12,10 @@ public class Main {
                 .addTask(() -> 42)
                 .addTask(() -> new UserResponse(1, "Emre"));
 
-        List<Object> result = flow.bakeAll();
-        result.forEach(System.out::println);
+        List<TaskResult<?>> result = flow.bakeAll();
+        result.forEach(r -> {
+            System.out.println(r.result().toString());
+        });
 
     }
 }
