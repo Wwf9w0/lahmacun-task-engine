@@ -7,14 +7,14 @@ public class VirtualMain {
 
     public static void main(String[] args) {
         VirtualThreadOven oven = new VirtualThreadOven();
-        VirtualChef chef = new VirtualChef(oven);
-        VirtualFlow virtualFlow = new VirtualFlow(chef);
+        VirtuaLahmacunlChef chef = new VirtuaLahmacunlChef(oven);
+        VirtuaLahmacunlFlow virtualFlow = new VirtuaLahmacunlFlow(chef);
         UserService userService = new UserService();
         EventService eventService = new EventService();
 
-        VirtualTask<UserProfile> profileTask = virtualFlow.addTask(userService::getProfile);
-        VirtualTask<List<Event>> eventTask = virtualFlow.addTask(eventService::eventList);
-        VirtualTask<String> stringTask = virtualFlow.addTask(() -> "Hello");
+        VirtualLahmacunTask<UserProfile> profileTask = virtualFlow.addTask(userService::getProfile);
+        VirtualLahmacunTask<List<Event>> eventTask = virtualFlow.addTask(eventService::eventList);
+        VirtualLahmacunTask<String> stringTask = virtualFlow.addTask(() -> "Hello");
 
         chef.waitAll();
         virtualFlow.bakeAll();
