@@ -1,4 +1,4 @@
-package org.engine;
+package org.engine.virtual;
 
 public final class TaskResult<T> {
     private final String name;
