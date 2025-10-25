@@ -31,7 +31,6 @@ public final class LahmacunChef {
         for (LahmacunTask<?> task : tasks) {
             futures.add(this.submit(task));
         }
-
         List<TaskResult<?>> results = new ArrayList<>();
         for (Future<TaskResult<?>> f : futures) {
             try {
