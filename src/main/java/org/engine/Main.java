@@ -6,16 +6,14 @@ public class Main {
     public static void main(String[] args) {
 
         VirtualThreadOven oven = new VirtualThreadOven();
-        LahmacunChef lahmacunChef = new LahmacunChef(oven);
-        LahmacunFlow flow = new LahmacunFlow(lahmacunChef)
-                .addTask(() -> "Merhaba")
-                .addTask(() -> 42)
+        LahmacunChef chef = new LahmacunChef(oven);
+        LahmacunFlow flow = new LahmacunFlow(chef)
+                .addTask(() -> "Hello World")
+                .addTask(() -> List.of(1, 2, 3))
                 .addTask(() -> new UserResponse(1, "Emre"));
 
         List<TaskResult<?>> result = flow.bakeAll();
-        result.forEach(r -> {
-            System.out.println(r.result().toString());
-        });
+        result.forEach(System.out::println);
 
     }
 }
