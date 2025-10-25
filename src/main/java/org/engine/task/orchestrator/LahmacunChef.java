@@ -1,8 +1,9 @@
-package org.engine.orchestrator;
+package org.engine.task.orchestrator;
 
-import org.engine.engine.LahmacunTask;
-import org.engine.engine.TaskResult;
-import org.engine.engine.TaskStatus;
+import org.engine.task.engine.LahmacunTask;
+import org.engine.virtual.TaskResult;
+import org.engine.virtual.TaskStatus;
+import org.engine.virtual.VirtualThreadOven;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public final class LahmacunChef {
                 long duration = System.currentTimeMillis() - start;
                 return new TaskResult<>(task.name(), TaskStatus.FAILED, e, null, duration);
             } finally {
-                oven.shutdown();
+                oven.executor().shutdown();
             }
         });
     }

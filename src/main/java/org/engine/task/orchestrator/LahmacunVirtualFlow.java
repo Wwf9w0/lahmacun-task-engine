@@ -1,6 +1,6 @@
-package org.engine.orchestrator;
+package org.engine.task.orchestrator;
 
-import org.engine.engine.TaskResult;
+import org.engine.virtual.TaskResult;
 
 import java.util.ArrayList;
 import java.util.List;
