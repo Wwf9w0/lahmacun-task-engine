@@ -21,15 +21,11 @@ public class VirtualMain {
         List<Event> events = eventTask.join();
         String string = stringTask.join();
 
-
-
         System.out.println("Profile: " + profile);
         System.out.println("Events: " + events);
         System.out.println("String: " + string);
 
     }
-
-
 }
 
 class EventService {
@@ -41,13 +37,11 @@ class EventService {
     }
 }
 
-
 class UserService {
     public UserProfile getProfile() {
         return new UserProfile("emre", "emre@gmail.com");
     }
 }
-
 
 record UserProfile(String userName, String email) {
 }
