@@ -16,7 +16,6 @@ public class Main {
 
         result.forEach(r -> System.out.printf("%s -> %s : %s%n",
                 r.name(), r.status(), r.result()));
-
     }
 }
 
