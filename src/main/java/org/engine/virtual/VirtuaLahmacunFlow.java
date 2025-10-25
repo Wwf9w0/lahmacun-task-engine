@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class VirtuaLahmacunlFlow {
+public class VirtuaLahmacunFlow {
     private final VirtuaLahmacunlChef chef;
     private final List<VirtualLahmacunTask<?>> tasks = new ArrayList<>();
 
-    public VirtuaLahmacunlFlow(VirtuaLahmacunlChef chef) {
+    public VirtuaLahmacunFlow(VirtuaLahmacunlChef chef) {
         this.chef = chef;
     }
 

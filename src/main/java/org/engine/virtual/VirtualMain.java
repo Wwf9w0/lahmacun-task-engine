@@ -10,7 +10,7 @@ public class VirtualMain {
     public static void main(String[] args) {
         VirtualThreadOven oven = new VirtualThreadOven();
         VirtuaLahmacunlChef chef = new VirtuaLahmacunlChef(oven);
-        VirtuaLahmacunlFlow virtualFlow = new VirtuaLahmacunlFlow(chef);
+        VirtuaLahmacunFlow virtualFlow = new VirtuaLahmacunFlow(chef);
         UserService userService = new UserService();
         EventService eventService = new EventService();
 

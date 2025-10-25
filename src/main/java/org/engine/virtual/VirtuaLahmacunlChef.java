@@ -22,10 +22,10 @@ public class VirtuaLahmacunlChef {
                 try {
                     Object res = task.future().get();
                     long duration = System.currentTimeMillis() - start;
-                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), TaskLahmacunStatus.SUCCESS, res, null, duration);
+                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), LahmacunTaskStatus.SUCCESS, res, null, duration);
                 } catch (Exception e) {
                     long duration = System.currentTimeMillis() - start;
-                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), TaskLahmacunStatus.FAILED, e, null, duration);
+                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), LahmacunTaskStatus.FAILED, e, null, duration);
                 }
 
             }));
@@ -37,7 +37,7 @@ public class VirtuaLahmacunlChef {
                 results.add(f.get());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                results.add(new TaskLahmacunResult<>("unknown-task", TaskLahmacunStatus.FAILED, e, null, 0));
+                results.add(new TaskLahmacunResult<>("unknown-task", LahmacunTaskStatus.FAILED, e, null, 0));
             } finally {
                 oven.executor().shutdown();
             }

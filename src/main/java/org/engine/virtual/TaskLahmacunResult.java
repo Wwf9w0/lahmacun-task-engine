@@ -2,12 +2,12 @@ package org.engine.virtual;
 
 public final class TaskLahmacunResult<T> {
     private final String name;
-    private final TaskLahmacunStatus status;
+    private final LahmacunTaskStatus status;
     private final T result;
     private final Throwable throwable;
     private final long durationMilis;
 
-    public TaskLahmacunResult(String name, TaskLahmacunStatus status, T result, Throwable throwable, long durationMillis) {
+    public TaskLahmacunResult(String name, LahmacunTaskStatus status, T result, Throwable throwable, long durationMillis) {
         this.name = name;
         this.status = status;
         this.result = result;
@@ -19,7 +19,7 @@ public final class TaskLahmacunResult<T> {
         return name;
     }
 
-    public TaskLahmacunStatus status() {
+    public LahmacunTaskStatus status() {
         return status;
     }
 
