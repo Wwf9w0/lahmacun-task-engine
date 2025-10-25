@@ -7,13 +7,15 @@ public class Main {
 
         VirtualThreadOven oven = new VirtualThreadOven();
         LahmacunChef chef = new LahmacunChef(oven);
-        LahmacunFlow flow = new LahmacunFlow(chef)
+        LahmacunVirtualFlow flow = new LahmacunVirtualFlow(chef)
                 .addTask(() -> "Hello World")
                 .addTask(() -> List.of(1, 2, 3))
                 .addTask(() -> new UserResponse(1, "Emre"));
 
         List<TaskResult<?>> result = flow.bakeAll();
-        result.forEach(System.out::println);
+
+        result.forEach(r -> System.out.printf("%s -> %s : %s%n",
+                r.name(), r.status(), r.result()));
 
     }
 }
