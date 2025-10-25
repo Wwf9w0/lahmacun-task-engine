@@ -5,37 +5,37 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-public class VirtualChef {
+public class VirtuaLahmacunlChef {
     private final VirtualThreadOven oven;
 
-    public VirtualChef(VirtualThreadOven oven) {
+    public VirtuaLahmacunlChef(VirtualThreadOven oven) {
         this.oven = oven;
     }
 
-    public List<TaskResult<?>> run(List<VirtualTask<?>> tasks) {
-        List<Future<TaskResult<?>>> futures = new ArrayList<>();
-        for (VirtualTask<?> task : tasks) {
+    public List<TaskLahmacunResult<?>> run(List<VirtualLahmacunTask<?>> tasks) {
+        List<Future<TaskLahmacunResult<?>>> futures = new ArrayList<>();
+        for (VirtualLahmacunTask<?> task : tasks) {
             futures.add(oven.submit(() -> {
                 long start = System.currentTimeMillis();
                 try {
                     Object res = task.future().get();
                     long duration = System.currentTimeMillis() - start;
-                    return new TaskResult<>(task.getClass().getSimpleName(), TaskStatus.SUCCESS, res, null, duration);
+                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), TaskLahmacunStatus.SUCCESS, res, null, duration);
                 } catch (Exception e) {
                     long duration = System.currentTimeMillis() - start;
-                    return new TaskResult<>(task.getClass().getSimpleName(), TaskStatus.FAILED, e, null, duration);
+                    return new TaskLahmacunResult<>(task.getClass().getSimpleName(), TaskLahmacunStatus.FAILED, e, null, duration);
                 }
 
             }));
         }
 
-        List<TaskResult<?>> results = new ArrayList<>();
-        for (Future<TaskResult<?>> f : futures) {
+        List<TaskLahmacunResult<?>> results = new ArrayList<>();
+        for (Future<TaskLahmacunResult<?>> f : futures) {
             try {
                 results.add(f.get());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                results.add(new TaskResult<>("unknown-task", TaskStatus.FAILED, e, null, 0));
+                results.add(new TaskLahmacunResult<>("unknown-task", TaskLahmacunStatus.FAILED, e, null, 0));
             } finally {
                 oven.executor().shutdown();
             }

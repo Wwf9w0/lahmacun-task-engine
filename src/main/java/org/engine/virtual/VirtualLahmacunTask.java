@@ -3,10 +3,10 @@ package org.engine.virtual;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class VirtualTask<T> {
+public class VirtualLahmacunTask<T> {
     private final CompletableFuture<T> future;
 
-    public VirtualTask(Supplier<T> supplier) {
+    public VirtualLahmacunTask(Supplier<T> supplier) {
         this.future = CompletableFuture.supplyAsync(supplier);
     }
 
