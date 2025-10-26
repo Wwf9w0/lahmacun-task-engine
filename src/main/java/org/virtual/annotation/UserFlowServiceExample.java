@@ -9,8 +9,7 @@ public class UserFlowServiceExample {
     private final UserService userService;
 
     public UserFlowServiceExample() {
-        UserService userService = new UserService();
-        this.userService = userService;
+        this.userService = new UserService();
     }
 
     @VirtualFlow
@@ -54,7 +53,7 @@ public class UserFlowServiceExample {
         graph.addEdge("TransformData", "PushToDB");
 
         graph.validate();
-        System.out.println("Grapsh return from userService: " + graph.toString());
+        System.out.println("Graph return from userService: " + graph);
         return graph;
     }
 }

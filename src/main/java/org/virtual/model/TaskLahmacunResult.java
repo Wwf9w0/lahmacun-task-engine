@@ -5,14 +5,14 @@ public final class TaskLahmacunResult<T> {
     private final LahmacunTaskStatus status;
     private final T result;
     private final Throwable throwable;
-    private final long durationMilis;
+    private final long durationMillis;
 
     public TaskLahmacunResult(String name, LahmacunTaskStatus status, T result, Throwable throwable, long durationMillis) {
         this.name = name;
         this.status = status;
         this.result = result;
         this.throwable = throwable;
-        this.durationMilis = durationMillis;
+        this.durationMillis = durationMillis;
     }
 
     public String name() {
@@ -32,7 +32,7 @@ public final class TaskLahmacunResult<T> {
     }
 
     public long durationMillis() {
-        return durationMilis;
+        return durationMillis;
     }
 
 }
