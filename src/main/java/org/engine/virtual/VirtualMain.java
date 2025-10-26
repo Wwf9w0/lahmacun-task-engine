@@ -3,7 +3,7 @@ package org.engine.virtual;
 import org.engine.core.VirtuaLahmacunFlow;
 import org.engine.core.VirtuaLahmacunlChef;
 import org.engine.core.VirtualThreadOven;
-import org.engine.virtual.model.VirtualLahmacunTask;
+import org.engine.virtual.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,23 +33,4 @@ public class VirtualMain {
     }
 }
 
-class EventService {
-    public List<Event> eventList() {
-        List<Event> events = new ArrayList<>();
-        events.add(new Event("event1", 1));
-        events.add(new Event("event2", 2));
-        return events;
-    }
-}
 
-class UserService {
-    public UserProfile getProfile() {
-        return new UserProfile("emre", "emre@gmail.com");
-    }
-}
-
-record UserProfile(String userName, String email) {
-}
-
-record Event(String name, int time) {
-}
