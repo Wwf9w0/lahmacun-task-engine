@@ -44,7 +44,7 @@ public class VirtuaLahmacunlChef {
         return results;
     }
 
-    public void waitAll(CompletableFuture<?>... futures) {
+ /*   public void waitAll(CompletableFuture<?>... futures) {
         oven.waitAll(futures);
-    }
+    } */
 }
