@@ -47,11 +47,8 @@ public class VirtualLahmacunFlowRuntime {
         allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result() + " | " + r.durationMillis()));
         oven.close();
         AtomicLong sum = new AtomicLong();
-        allResults.forEach((key, value) -> {
-            sum.addAndGet(value.durationMillis());
-        });
+        allResults.forEach((k,v) ->  sum.addAndGet(v.durationMillis()));
         System.out.println("Completed Flows -> "  + sum+" ms");
-
     }
 
     private List<Class<?>> scanPackage(String basePackage) throws Exception {
