@@ -1,4 +1,4 @@
-package org.engine.virtual.model;
+package org.virtual.virtual.model;
 
 import java.util.ArrayList;
 import java.util.List;
