@@ -1,30 +1,103 @@
-# Lahmacun Virtual Flow 
+# VirtualFlow 🌊
 
-**Lahmacun Virtual Flow** is a lightweight Java 21 task flow engine leveraging Virtual Threads for parallel execution. It allows you to run tasks of different types, collect results, and share data between tasks using a context.
+## Description
 
----
+VirtualFlow is a Java-based DAG (Directed Acyclic Graph) task execution system. It manages task dependencies similarly to Airflow and ensures tasks are executed in the correct order.
 
-## Features
-
-- **Parallel task execution** using Virtual Threads
-- Supports **tasks with different return types** (results collected as `Object`)
-- **TaskContext** for sharing data between tasks
-- Lambda-friendly and simple **API**
-- Task status tracking and error handling
+This project models nodes and their dependencies to manage workflows. Cycle detection and root node identification guarantee the DAG's validity.
 
 ---
 
-## Example Usage
+## FlowGraph Structure
+
+### 1️⃣ FlowNode
+
+Each task is represented by a `FlowNode`.
 
 ```java
-VirtualThreadOven oven = new VirtualThreadOven();
-LahmacunChef chef = new LahmacunChef(oven);
+FlowNode node = new FlowNode("FetchUsers", () -> System.out.println("Fetching users..."));
+```
 
-LahmacunFlow flow = new LahmacunFlow(chef)
-        .addTask(() -> "Hello")
-        .addTask(() -> 42)
-        .addTask(() -> new UserResponse(1, "Emre"));
+* `id`: Unique identifier for the node.
+* `task`: Runnable task to execute.
+* `nextNodes`: Nodes that run after this node.
+* `prevNodes`: Nodes that ran before this node.
 
-List<Object> results = flow.bakeAll();
+### 2️⃣ FlowGraph
 
-results.forEach(System.out::println);
+The entire DAG is stored here.
+
+```java
+FlowGraph graph = new FlowGraph();
+graph.addNode("FetchUsers", task);
+graph.addEdge("FetchUsers", "TransformData");
+```
+
+* `addNode(String, Runnable)`: Adds a node.
+* `addEdge(String, String)`: Connects two nodes.
+* `getRoots()`: Returns root nodes without any previous nodes.
+* `validate()`: Validates the DAG and checks for cycles.
+* `hasCycle()`: Checks for cycles.
+
+---
+
+## Example DAG and Dependencies
+
+```java
+FetchUsers -> TransformData -> PushToDB
+FetchUsers -> SendNotification
+```
+
+* `FetchUsers` is the root node.
+* `TransformData` depends on `PushToDB`.
+* `SendNotification` runs independently after `FetchUsers`.
+
+### Code Example
+
+```java
+FlowGraph graph = new FlowGraph();
+graph.addNode("FetchUsers", () -> System.out.println("Fetching users..."));
+graph.addNode("TransformData", () -> System.out.println("Transforming data..."));
+graph.addNode("PushToDB", () -> System.out.println("Pushing data to DB..."));
+graph.addNode("SendNotification", () -> System.out.println("Sending notification..."));
+
+graph.addEdge("FetchUsers", "TransformData");
+graph.addEdge("FetchUsers", "SendNotification");
+graph.addEdge("TransformData", "PushToDB");
+
+graph.validate();
+
+System.out.println("Roots: " + graph.getRoots());
+for (FlowNode node : graph.getNodes()) {
+    System.out.println(node);
+}
+```
+
+### Expected Output
+
+```
+Roots: [FlowNode{id='FetchUsers', next=[TransformData, SendNotification]}]
+FlowNode{id='FetchUsers', next=[TransformData, SendNotification]}
+FlowNode{id='TransformData', next=[PushToDB]}
+FlowNode{id='PushToDB', next=[]}
+FlowNode{id='SendNotification', next=[]}
+```
+
+---
+
+## Notes
+
+* Using `LinkedHashMap` preserves insertion order.
+* `validate()` checks the DAG for cycles.
+* Nodes should be added in a dependency-respecting order to ensure correct execution.
+
+---
+
+## Next Steps
+
+* Add a `FlowExecutor` to execute nodes in parallel or sequentially based on dependencies.
+* Implement topological sorting to automatically determine execution order.
+
+---
+
+VirtualFlow enables Ja
