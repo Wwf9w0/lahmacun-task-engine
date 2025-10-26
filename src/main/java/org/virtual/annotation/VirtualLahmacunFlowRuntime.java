@@ -24,24 +24,19 @@ public class VirtualLahmacunFlowRuntime {
     public void startAllFlows(String basePackage) throws Exception {
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
-
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotation() || clazz.isInterface()){
                 continue;
             }
-
             Object instance = clazz.getDeclaredConstructor().newInstance();
-
             for (Method method : clazz.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(VirtualFlow.class)) {
                     method.setAccessible(true);
                     Object result = method.invoke(instance);
-
                     if (!(result instanceof FlowGraph graph)) {
                         throw new IllegalStateException("@" + VirtualFlow.class.getSimpleName()
                                 + " method must return FlowGraph: " + method.getName());
                     }
-
                     FlowExecutorWithChef executor = new FlowExecutorWithChef(graph, chef);
                     allResults.putAll(executor.execute());
                 }
@@ -50,7 +45,6 @@ public class VirtualLahmacunFlowRuntime {
 
         System.out.println("\n--- VirtualFlow Runtime Results ---");
         allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result()));
-
         oven.close();
     }
 
@@ -58,7 +52,6 @@ public class VirtualLahmacunFlowRuntime {
         List<Class<?>> classes = new ArrayList<>();
         String path = basePackage.replace('.', '/');
         Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(path);
-
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             File dir = new File(resource.getFile());
@@ -73,6 +66,4 @@ public class VirtualLahmacunFlowRuntime {
         }
         return classes;
     }
-
-
 }

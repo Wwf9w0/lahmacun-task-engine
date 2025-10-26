@@ -1,6 +1,5 @@
 package org.virtual.dag;
 
-
 import org.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;

@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class VirtualLahmacunChef {
+
     private final VirtualThreadOven oven;
 
     public VirtualLahmacunChef(VirtualThreadOven oven) {
@@ -31,7 +32,6 @@ public class VirtualLahmacunChef {
                 }
             }));
         }
-
         List<TaskLahmacunResult<?>> results = new ArrayList<>();
         for (Future<TaskLahmacunResult<?>> f : futures) {
             try {
