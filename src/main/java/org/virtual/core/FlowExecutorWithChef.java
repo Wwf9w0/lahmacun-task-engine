@@ -33,6 +33,8 @@ public class FlowExecutorWithChef {
     }
 
     private void submitNode(FlowNode<?> node, Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures) {
+        Assert.nonNull(node, "node must not be null");
+        Assert.nonNull(futures, "futures must not be null");
         if (futures.containsKey(node.getId())) {
             return;
         }

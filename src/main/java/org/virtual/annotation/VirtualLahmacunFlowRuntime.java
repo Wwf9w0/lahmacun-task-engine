@@ -1,5 +1,6 @@
 package org.virtual.annotation;
 
+import org.virtual.core.Assert;
 import org.virtual.core.FlowExecutorWithChef;
 import org.virtual.core.VirtualLahmacunChef;
 import org.virtual.core.VirtualThreadOven;
@@ -23,6 +24,7 @@ public class VirtualLahmacunFlowRuntime {
     }
 
     public void startAllFlows(String basePackage) throws Exception {
+        Assert.nonNull(basePackage, "basePackage must not be null");
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
         for (Class<?> clazz : classes) {
