@@ -10,7 +10,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class VirtualFlowRuntime {
 
@@ -22,9 +21,6 @@ public class VirtualFlowRuntime {
         this.chef = new VirtualLahmacunChef(oven);
     }
 
-    /**
-     * Proje içerisindeki tüm sınıfları tarar ve @VirtualFlow metotlarını bulup çalıştırır.
-     */
     public void startAllFlows(String basePackage) throws Exception {
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
@@ -52,7 +48,6 @@ public class VirtualFlowRuntime {
             }
         }
 
-        // Sonuçları yazdır
         System.out.println("\n--- VirtualFlow Runtime Results ---");
         allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result()));
 
