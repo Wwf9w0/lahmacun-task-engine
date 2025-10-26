@@ -12,7 +12,7 @@ public class Main {
         VirtualLahmacunChef chef = new VirtualLahmacunChef(oven);
 
         UserFlowServiceExample service = new UserFlowServiceExample();
-        EventServiceFlowEcample eventService = new EventServiceFlowEcample();
+        EventFlowServiceExample eventService = new EventFlowServiceExample();
         FlowMethodExecutor executor = new FlowMethodExecutor(chef);
 
         Map<String, TaskLahmacunResult<?>> results = executor.execute(service, eventService);

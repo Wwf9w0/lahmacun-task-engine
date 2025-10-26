@@ -4,11 +4,11 @@ import org.virtual.dag.FlowGraph;
 import org.virtual.virtual.model.EventService;
 import org.virtual.virtual.model.VirtualLahmacunTask;
 
-public class EventServiceFlowEcample {
+public class EventFlowServiceExample {
 
     private final EventService eventService;
 
-    public EventServiceFlowEcample() {
+    public EventFlowServiceExample() {
         this.eventService = new EventService();
     }
 
