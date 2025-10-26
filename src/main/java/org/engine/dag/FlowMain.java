@@ -1,7 +1,7 @@
 package org.engine.dag;
 
 import org.engine.core.FlowExecutorWithChef;
-import org.engine.core.VirtuaLahmacunlChef;
+import org.engine.core.VirtualLahmacunChef;
 import org.engine.core.VirtualThreadOven;
 import org.engine.virtual.model.EventService;
 import org.engine.virtual.model.TaskLahmacunResult;
@@ -14,7 +14,7 @@ public class FlowMain {
     public static void main(String[] args) throws Exception {
 
         VirtualThreadOven oven = new VirtualThreadOven();
-        VirtuaLahmacunlChef chef = new VirtuaLahmacunlChef(oven);
+        VirtualLahmacunChef chef = new VirtualLahmacunChef(oven);
 
         UserService userService = new UserService();
         EventService eventService = new EventService();
