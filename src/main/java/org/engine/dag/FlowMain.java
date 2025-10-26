@@ -72,6 +72,8 @@ public class FlowMain {
         FlowExecutorWithChef executor = new FlowExecutorWithChef(graph, chef);
         Map<String, TaskLahmacunResult<?>> results = executor.execute();
 
+       chef.waitAll();
+
         System.out.println("\n--- Task Results ---");
         results.forEach((id, r) -> System.out.println(id + ": " + r.status() + " -> " + r.result()));
 

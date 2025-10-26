@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 
 public class FlowExecutorWithChef {
@@ -29,7 +30,7 @@ public class FlowExecutorWithChef {
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();
         Set<FlowNode<?>> executed = new HashSet<>();
 
-        Queue<FlowNode<?>> queue = new ArrayDeque<>(graph.getRoots());
+        Queue<FlowNode<?>> queue = new ConcurrentLinkedDeque<>(graph.getRoots());
 
         while (!queue.isEmpty()) {
             // TODO need refactor to FlowNode list
