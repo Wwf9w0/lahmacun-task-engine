@@ -1,4 +1,4 @@
-package org.virtual.virtual.model;
+package org.virtual.model;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;

@@ -1,8 +1,8 @@
 package org.virtual.annotation;
 
 import org.virtual.dag.FlowGraph;
-import org.virtual.virtual.model.EventService;
-import org.virtual.virtual.model.VirtualLahmacunTask;
+import org.virtual.model.EventService;
+import org.virtual.model.VirtualLahmacunTask;
 
 public class EventFlowServiceExample {
 

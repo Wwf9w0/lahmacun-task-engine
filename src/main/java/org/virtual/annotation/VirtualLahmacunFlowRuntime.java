@@ -4,7 +4,7 @@ import org.virtual.core.FlowExecutorWithChef;
 import org.virtual.core.VirtualLahmacunChef;
 import org.virtual.core.VirtualThreadOven;
 import org.virtual.dag.FlowGraph;
-import org.virtual.virtual.model.TaskLahmacunResult;
+import org.virtual.model.TaskLahmacunResult;
 
 import java.io.File;
 import java.lang.reflect.Method;

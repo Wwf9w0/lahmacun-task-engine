@@ -1,8 +1,8 @@
 package org.virtual.core;
 
-import org.virtual.virtual.model.LahmacunTaskStatus;
-import org.virtual.virtual.model.TaskLahmacunResult;
-import org.virtual.virtual.model.VirtualLahmacunTask;
+import org.virtual.model.LahmacunTaskStatus;
+import org.virtual.model.TaskLahmacunResult;
+import org.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;

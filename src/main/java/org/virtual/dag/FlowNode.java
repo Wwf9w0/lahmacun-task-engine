@@ -1,6 +1,6 @@
 package org.virtual.dag;
 
-import org.virtual.virtual.model.VirtualLahmacunTask;
+import org.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;
