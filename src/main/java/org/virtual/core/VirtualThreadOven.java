@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 public final class VirtualThreadOven implements AutoCloseable {
+
     private final ExecutorService executor;
 
     public VirtualThreadOven() {
