@@ -2,47 +2,32 @@ package org.engine.dag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class FlowNode {
+public class FlowNode<T> {
 
     private final String id;
-    private final Runnable task;
-    private final List<FlowNode> nextNodes = new ArrayList<>();
-    private final List<FlowNode> prevNodes = new ArrayList<>();
+    private final Supplier<T> task;
+    private final List<FlowNode<?>> nextNodes = new ArrayList<>();
+    private final List<FlowNode<?>> prevNodes = new ArrayList<>();
 
-    public FlowNode(String id, Runnable task) {
+    public FlowNode(String id, Supplier<T> task) {
         this.id = id;
         this.task = task;
     }
 
-    public void addNextNode(FlowNode next) {
+    public String getId() { return id; }
+    public Supplier<T> getTask() { return task; }
+    public List<FlowNode<?>> getNextNodes() { return nextNodes; }
+    public List<FlowNode<?>> getPrevNodes() { return prevNodes; }
+
+    public void addNextNode(FlowNode<?> next) {
         nextNodes.add(next);
-        next.addPrevNode(this);
-    }
-
-    private void addPrevNode(FlowNode prev) {
-        prevNodes.add(prev);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public List<FlowNode> getNextNodes() {
-        return nextNodes;
-    }
-
-    public List<FlowNode> getPrevNodes() {
-        return prevNodes;
-    }
-
-    public Runnable getTask() {
-        return task;
+        next.prevNodes.add(this);
     }
 
     @Override
     public String toString() {
-        List<String> nextNames = nextNodes.stream().map(FlowNode::getId).toList();
-        return "FlowNode{id='" + id + "', next=" + nextNames + "}";
+        return "FlowNode{id='" + id + "', next=" + nextNodes + "}";
     }
 }

@@ -29,7 +29,6 @@ public class VirtuaLahmacunlChef {
                     long duration = System.currentTimeMillis() - start;
                     return new TaskLahmacunResult<>(task.getClass().getSimpleName(), LahmacunTaskStatus.FAILED, e, null, duration);
                 }
-
             }));
         }
 
@@ -40,8 +39,6 @@ public class VirtuaLahmacunlChef {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 results.add(new TaskLahmacunResult<>("unknown-task", LahmacunTaskStatus.FAILED, e, null, 0));
-            } finally {
-                oven.executor().shutdown();
             }
         }
         return results;

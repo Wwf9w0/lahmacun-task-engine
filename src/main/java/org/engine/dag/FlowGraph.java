@@ -1,34 +1,44 @@
 package org.engine.dag;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FlowGraph {
+    private final Map<String, FlowNode<?>> nodes = new LinkedHashMap<>();
 
-    private final Map<String, FlowNode> nodes = new LinkedHashMap<>();
-
-    public FlowNode addNode(String name, Runnable task) {
-        FlowNode node = new FlowNode(name, task);
-        nodes.put(name, node);
+    public <T> FlowNode<T> addNode(String id, java.util.function.Supplier<T> task) {
+        FlowNode<T> node = new FlowNode<>(id, task);
+        nodes.put(id, node);
         return node;
     }
 
     public void addEdge(String fromId, String toId) {
-        FlowNode from = nodes.get(fromId);
-        FlowNode to = nodes.get(toId);
+        FlowNode<?> from = nodes.get(fromId);
+        FlowNode<?> to = nodes.get(toId);
         if (from == null || to == null) {
             throw new IllegalArgumentException("Invalid edge: " + fromId + " -> " + toId);
         }
         from.addNextNode(to);
     }
 
-    public List<FlowNode> getRoots() {
-        return nodes.values().stream()
-                .filter(n -> n.getPrevNodes().isEmpty())
-                .toList();
+    public Collection<FlowNode<?>> getNodes() {
+        return nodes.values();
     }
 
-    public Collection<FlowNode> getNodes() {
-        return nodes.values();
+    public List<FlowNode<?>> getRoots() {
+        List<FlowNode<?>> roots = new ArrayList<>();
+        for (FlowNode<?> node : nodes.values()) {
+            if (node.getPrevNodes().isEmpty()) {
+                roots.add(node);
+            }
+        }
+        return roots;
     }
 
     public void validate() {
@@ -38,9 +48,9 @@ public class FlowGraph {
     }
 
     private boolean hasCycle() {
-        Set<FlowNode> visited = new HashSet<>();
-        Set<FlowNode> stack = new HashSet<>();
-        for (FlowNode node : nodes.values()) {
+        Set<FlowNode<?>> visited = new HashSet<>();
+        Set<FlowNode<?>> stack = new HashSet<>();
+        for (FlowNode<?> node : nodes.values()) {
             if (dfsCycle(node, visited, stack)) {
                 return true;
             }
@@ -48,21 +58,20 @@ public class FlowGraph {
         return false;
     }
 
-    private boolean dfsCycle(FlowNode node, Set<FlowNode> visited, Set<FlowNode> stack) {
-        if (stack.contains(node)){
+    private boolean dfsCycle(FlowNode<?> node, Set<FlowNode<?>> visited, Set<FlowNode<?>> stack) {
+        if (stack.contains(node)) {
             return true;
         }
-        if (visited.contains(node)){
+        if (visited.contains(node)) {
             return false;
         }
-
         visited.add(node);
         stack.add(node);
-
-        for (FlowNode next : node.getNextNodes()) {
-            if (dfsCycle(next, visited, stack)) return true;
+        for (FlowNode<?> next : node.getNextNodes()) {
+            if (dfsCycle(next, visited, stack)) {
+                return true;
+            }
         }
-
         stack.remove(node);
         return false;
     }
