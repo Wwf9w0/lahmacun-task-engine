@@ -15,39 +15,10 @@ public class UserFlowServiceExample {
     @VirtualFlow
     public FlowGraph userTaskGraph() {
         FlowGraph graph = new FlowGraph();
-        graph.addNode("FetchUsersProfile", () -> new VirtualLahmacunTask<>(() -> {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return userService.getProfile();
-        }));
-        graph.addNode("TransformData", () -> new VirtualLahmacunTask<>(() -> {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return "TransformData";
-        }));
-        graph.addNode("PushToDB", () -> new VirtualLahmacunTask<>(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return "Data pushed to DB";
-        }));
-        graph.addNode("SendNotification", () -> new VirtualLahmacunTask<>(() -> {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return "Notification sent";
-        }));
-
+        graph.addNode("FetchUsersProfile", () -> new VirtualLahmacunTask<>(userService::getProfile));
+        graph.addNode("TransformData", () -> new VirtualLahmacunTask<>(() -> "TransformData"));
+        graph.addNode("PushToDB", () -> new VirtualLahmacunTask<>(() -> "Data pushed to DB"));
+        graph.addNode("SendNotification", () -> new VirtualLahmacunTask<>(() -> "Notification sent"));
         graph.addEdge("FetchUsersProfile", "TransformData");
         graph.addEdge("FetchUsersProfile", "SendNotification");
         graph.addEdge("TransformData", "PushToDB");
