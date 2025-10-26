@@ -2,7 +2,7 @@ package org.virtual.annotation;
 
 import org.virtual.dag.FlowGraph;
 import org.virtual.model.EventService;
-import org.virtual.model.VirtualLahmacunTask;
+import org.virtual.core.VirtualLahmacunTask;
 
 public class EventFlowServiceExample {
 

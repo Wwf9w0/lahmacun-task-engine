@@ -2,7 +2,6 @@ package org.virtual.core;
 
 import org.virtual.model.LahmacunTaskStatus;
 import org.virtual.model.TaskLahmacunResult;
-import org.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;

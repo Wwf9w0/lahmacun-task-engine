@@ -3,7 +3,6 @@ package org.virtual.core;
 import org.virtual.dag.FlowGraph;
 import org.virtual.dag.FlowNode;
 import org.virtual.model.TaskLahmacunResult;
-import org.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
