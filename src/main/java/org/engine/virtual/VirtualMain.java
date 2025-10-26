@@ -1,5 +1,10 @@
 package org.engine.virtual;
 
+import org.engine.core.VirtuaLahmacunFlow;
+import org.engine.core.VirtuaLahmacunlChef;
+import org.engine.core.VirtualThreadOven;
+import org.engine.virtual.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +13,7 @@ public class VirtualMain {
     public static void main(String[] args) {
         VirtualThreadOven oven = new VirtualThreadOven();
         VirtuaLahmacunlChef chef = new VirtuaLahmacunlChef(oven);
-        VirtuaLahmacunlFlow virtualFlow = new VirtuaLahmacunlFlow(chef);
+        VirtuaLahmacunFlow virtualFlow = new VirtuaLahmacunFlow(chef);
         UserService userService = new UserService();
         EventService eventService = new EventService();
 
@@ -25,27 +30,7 @@ public class VirtualMain {
         System.out.println("Profile: " + profile);
         System.out.println("Events: " + events);
         System.out.println("String: " + string);
-
     }
 }
 
-class EventService {
-    public List<Event> eventList() {
-        List<Event> events = new ArrayList<>();
-        events.add(new Event("event1", 1));
-        events.add(new Event("event2", 2));
-        return events;
-    }
-}
 
-class UserService {
-    public UserProfile getProfile() {
-        return new UserProfile("emre", "emre@gmail.com");
-    }
-}
-
-record UserProfile(String userName, String email) {
-}
-
-record Event(String name, int time) {
-}

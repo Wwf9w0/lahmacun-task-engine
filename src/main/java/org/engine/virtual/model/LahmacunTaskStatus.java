@@ -1,6 +1,6 @@
-package org.engine.virtual;
+package org.engine.virtual.model;
 
-public enum TaskLahmacunStatus {
+public enum LahmacunTaskStatus {
     PENDING,
     RUNNING,
     SUCCESS,
