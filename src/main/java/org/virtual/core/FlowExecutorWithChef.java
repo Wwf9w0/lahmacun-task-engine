@@ -1,9 +1,9 @@
-package org.engine.core;
+package org.virtual.core;
 
-import org.engine.dag.FlowGraph;
-import org.engine.dag.FlowNode;
-import org.engine.virtual.model.TaskLahmacunResult;
-import org.engine.virtual.model.VirtualLahmacunTask;
+import org.virtual.dag.FlowGraph;
+import org.virtual.dag.FlowNode;
+import org.virtual.virtual.model.TaskLahmacunResult;
+import org.virtual.virtual.model.VirtualLahmacunTask;
 
 import java.util.Collections;
 import java.util.HashSet;

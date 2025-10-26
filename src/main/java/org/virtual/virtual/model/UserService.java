@@ -1,4 +1,4 @@
-package org.engine.virtual.model;
+package org.virtual.virtual.model;
 
 public class UserService {
 
