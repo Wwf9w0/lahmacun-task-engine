@@ -14,10 +14,9 @@ import java.util.function.Supplier;
 public class FlowGraph {
     private final Map<String, FlowNode<?>> nodes = new LinkedHashMap<>();
 
-    public <T> FlowNode<T> addNode(String id, Supplier<VirtualLahmacunTask<T>> task) {
+    public <T> void addNode(String id, Supplier<VirtualLahmacunTask<T>> task) {
         FlowNode<T> node = new FlowNode<>(id, task);
         nodes.put(id, node);
-        return node;
     }
 
     public void addEdge(String fromId, String toId) {

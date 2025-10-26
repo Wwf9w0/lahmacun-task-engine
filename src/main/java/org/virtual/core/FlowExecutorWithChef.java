@@ -23,7 +23,7 @@ public class FlowExecutorWithChef {
 
     public Map<String, TaskLahmacunResult<?>> execute() {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
-        for (FlowNode node : graph.getNodes()) {
+        for (FlowNode<?> node : graph.getNodes()) {
             submitNode(node, futures);
         }
         chef.waitAll(futures.values().toArray(new CompletableFuture[0]));
@@ -33,6 +33,8 @@ public class FlowExecutorWithChef {
     }
 
     private void submitNode(FlowNode<?> node, Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures) {
+        Assert.nonNull(node, "node must not be null");
+        Assert.nonNull(futures, "futures must not be null");
         if (futures.containsKey(node.getId())) {
             return;
         }
@@ -44,7 +46,7 @@ public class FlowExecutorWithChef {
         CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
                 .allOf(depFutures.toArray(new CompletableFuture[0]))
                 .thenCompose(ignored -> chef.oven().submit(() -> {
-                    VirtualLahmacunTask<?> task = (VirtualLahmacunTask<?>) node.getTask().get();
+                    VirtualLahmacunTask<?> task = node.getTask().get();
                     List<TaskLahmacunResult<?>> taskResults = chef.run(Collections.singletonList(task));
                     return taskResults.getFirst();
                 }));

@@ -34,7 +34,7 @@ public class EventFlowServiceExample {
         graph.addEdge("EventList", "TransformData");
 
         graph.validate();
-        System.out.println("Grapsh return from eventService: " + graph.toString());
+        System.out.println("Graph return from eventService: " + graph);
         return graph;
     }
 }
