@@ -10,6 +10,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class VirtualLahmacunFlowRuntime {
 
@@ -42,10 +43,15 @@ public class VirtualLahmacunFlowRuntime {
                 }
             }
         }
-
         System.out.println("\n--- VirtualFlow Runtime Results ---");
-        allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result()));
+        allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result() + " | " + r.durationMillis()));
         oven.close();
+        AtomicLong sum = new AtomicLong();
+        allResults.forEach((key, value) -> {
+            sum.addAndGet(value.durationMillis());
+        });
+        System.out.println("Completed Flows -> "  + sum+" ms");
+
     }
 
     private List<Class<?>> scanPackage(String basePackage) throws Exception {
