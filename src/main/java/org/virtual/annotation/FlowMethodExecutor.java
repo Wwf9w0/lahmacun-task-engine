@@ -16,12 +16,6 @@ public class FlowMethodExecutor {
         this.chef = chef;
     }
 
-    /**
-     * Bir service nesnesi içindeki tüm @VirtualFlow annotasyonlu methodları çalıştırır
-     * @param services bir veya birden fazla service nesnesi
-     * @return tüm FlowGraph sonuçlarını Map olarak döner
-     * @throws Exception
-     */
     public Map<String, TaskLahmacunResult<?>> execute(Object... services) throws Exception {
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
         List<CompletableFuture<Map<String, TaskLahmacunResult<?>>>> futures = new ArrayList<>();
@@ -31,7 +25,6 @@ public class FlowMethodExecutor {
                 if (method.isAnnotationPresent(VirtualFlow.class)) {
                     method.setAccessible(true);
 
-                    // CompletableFuture ile her FlowGraph paralel çalışsın
                     CompletableFuture<Map<String, TaskLahmacunResult<?>>> future = CompletableFuture.supplyAsync(() -> {
                         try {
                             Object result = method.invoke(service);
@@ -50,10 +43,8 @@ public class FlowMethodExecutor {
             }
         }
 
-        // Tüm FlowGraph’ler bitene kadar bekle
         chef.waitAll(futures.toArray(new CompletableFuture[0]));
 
-        // Sonuçları birleştir
         for (CompletableFuture<Map<String, TaskLahmacunResult<?>>> f : futures) {
             allResults.putAll(f.join());
         }
