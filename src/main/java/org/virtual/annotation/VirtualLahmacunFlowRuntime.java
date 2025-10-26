@@ -24,7 +24,7 @@ public class VirtualLahmacunFlowRuntime {
     }
 
     public void startAllFlows(String basePackage) throws Exception {
-        Assert.nonNull(basePackage, "basePackage must not be null");
+        Assert.nonNull(basePackage, "Base package must not be null");
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
         for (Class<?> clazz : classes) {
