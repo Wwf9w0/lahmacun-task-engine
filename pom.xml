@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.engine</groupId>
-    <artifactId>lahmacun-task-engine</artifactId>
+    <artifactId>lahmacun-virtual-flow</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

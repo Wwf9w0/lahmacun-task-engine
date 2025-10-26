@@ -1,24 +1,21 @@
 package org.engine.dag;
 
+import org.engine.virtual.model.EventService;
+import org.engine.virtual.model.UserService;
+
 public class FlowMain {
 
     public static void main(String[] args) {
         FlowGraph graph = new FlowGraph();
+        UserService userService = new UserService();
+        EventService eventService = new EventService();
 
-        graph.addNode("FetchUsers", () -> System.out.println("Fetching users..."));
-        graph.addNode("TransformData", () -> System.out.println("Transforming data..."));
-        graph.addNode("PushToDB", () -> System.out.println("Pushing data to DB..."));
-        graph.addNode("SendNotification", () -> System.out.println("Sending notification..."));
-
-        graph.addEdge("FetchUsers", "TransformData");
-        graph.addEdge("FetchUsers", "SendNotification");
-        graph.addEdge("TransformData", "PushToDB");
-
+        graph.addNode("UserService", () -> userService.getProfile());
+        graph.addNode("EventService", () -> eventService.eventList());
+        graph.addEdge("UserService", "EventService");
         graph.validate();
 
         System.out.println("Roots: " + graph.getRoots());
-        for (FlowNode node : graph.getNodes()) {
-            System.out.println(node);
-        }
+        graph.getNodes().forEach(System.out::println);
     }
 }

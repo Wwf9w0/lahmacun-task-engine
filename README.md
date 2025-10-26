@@ -1,6 +1,6 @@
-# Lahmacun Task Engine 
+# Lahmacun Virtual Flow 
 
-**Lahmacun Task Engine** is a lightweight Java 21 task flow engine leveraging Virtual Threads for parallel execution. It allows you to run tasks of different types, collect results, and share data between tasks using a context.
+**Lahmacun Virtual Flow** is a lightweight Java 21 task flow engine leveraging Virtual Threads for parallel execution. It allows you to run tasks of different types, collect results, and share data between tasks using a context.
 
 ---
 
