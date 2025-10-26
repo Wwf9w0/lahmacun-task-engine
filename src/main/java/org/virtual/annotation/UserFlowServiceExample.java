@@ -1,27 +1,21 @@
-package org.virtual.dag;
+package org.virtual.annotation;
 
-import org.virtual.core.FlowExecutorWithChef;
-import org.virtual.core.VirtualLahmacunChef;
-import org.virtual.core.VirtualThreadOven;
-import org.virtual.virtual.model.EventService;
-import org.virtual.virtual.model.TaskLahmacunResult;
+import org.virtual.dag.FlowGraph;
 import org.virtual.virtual.model.UserService;
 import org.virtual.virtual.model.VirtualLahmacunTask;
 
-import java.util.Map;
+public class UserFlowServiceExample {
 
-public class FlowMain {
+    private final UserService userService;
 
-    public static void main(String[] args) throws Exception {
-
-        VirtualThreadOven oven = new VirtualThreadOven();
-        VirtualLahmacunChef chef = new VirtualLahmacunChef(oven);
-
+    public UserFlowServiceExample() {
         UserService userService = new UserService();
-        EventService eventService = new EventService();
+        this.userService = userService;
+    }
 
+    @VirtualFlow
+    public FlowGraph userTaskGraph() {
         FlowGraph graph = new FlowGraph();
-
         graph.addNode("FetchUsersProfile", () -> new VirtualLahmacunTask<>(() -> {
             try {
                 Thread.sleep(200);
@@ -37,14 +31,6 @@ public class FlowMain {
                 throw new RuntimeException(e);
             }
             return "TransformData";
-        }));
-        graph.addNode("FetchEventList", () -> new VirtualLahmacunTask<>(() -> {
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return eventService.eventList();
         }));
         graph.addNode("PushToDB", () -> new VirtualLahmacunTask<>(() -> {
             try {
@@ -63,22 +49,12 @@ public class FlowMain {
             return "Notification sent";
         }));
 
-        graph.addEdge("FetchUsersProfile", "FetchEventList");
+        graph.addEdge("FetchUsersProfile", "TransformData");
         graph.addEdge("FetchUsersProfile", "SendNotification");
         graph.addEdge("TransformData", "PushToDB");
 
         graph.validate();
-
-        FlowExecutorWithChef executor = new FlowExecutorWithChef(graph, chef);
-        Map<String, TaskLahmacunResult<?>> results = executor.execute();
-
-        System.out.println("\n--- Task Results ---");
-        results.forEach((id, r) -> System.out.println(id + ": " + r.status() + " -> " + r.result()));
-
-        oven.close();
+        System.out.println("Grapsh return from userService: " + graph.toString());
+        return graph;
     }
 }
-
-
-
-

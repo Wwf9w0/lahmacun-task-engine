@@ -1,6 +1,8 @@
 package org.virtual.dag;
 
 
+import org.virtual.virtual.model.VirtualLahmacunTask;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -8,11 +10,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class FlowGraph {
     private final Map<String, FlowNode<?>> nodes = new LinkedHashMap<>();
 
-    public <T> FlowNode<T> addNode(String id, java.util.function.Supplier<T> task) {
+    public <T> FlowNode<T> addNode(String id, Supplier<VirtualLahmacunTask<T>> task) {
         FlowNode<T> node = new FlowNode<>(id, task);
         nodes.put(id, node);
         return node;
