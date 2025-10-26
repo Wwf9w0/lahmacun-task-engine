@@ -1,4 +1,4 @@
-package org.engine.virtual.model;
+package org.virtual.virtual.model;
 
 public final class TaskLahmacunResult<T> {
     private final String name;

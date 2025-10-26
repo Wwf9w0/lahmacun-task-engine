@@ -1,3 +1,3 @@
-package org.engine.virtual.model;
+package org.virtual.virtual.model;
 
 public record Event(String name, int time) {}
