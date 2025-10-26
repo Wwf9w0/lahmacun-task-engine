@@ -1,4 +1,7 @@
-package org.engine.virtual;
+package org.engine.core;
+
+import org.engine.virtual.model.TaskLahmacunResult;
+import org.engine.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;

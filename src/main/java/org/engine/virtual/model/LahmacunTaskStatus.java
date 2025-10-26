@@ -1,4 +1,4 @@
-package org.engine.virtual;
+package org.engine.virtual.model;
 
 public enum LahmacunTaskStatus {
     PENDING,
