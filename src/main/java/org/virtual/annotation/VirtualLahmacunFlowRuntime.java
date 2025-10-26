@@ -11,12 +11,12 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
-public class VirtualFlowRuntime {
+public class VirtualLahmacunFlowRuntime {
 
     private final VirtualThreadOven oven;
     private final VirtualLahmacunChef chef;
 
-    public VirtualFlowRuntime() {
+    public VirtualLahmacunFlowRuntime() {
         this.oven = new VirtualThreadOven();
         this.chef = new VirtualLahmacunChef(oven);
     }
@@ -54,9 +54,6 @@ public class VirtualFlowRuntime {
         oven.close();
     }
 
-    /**
-     * Belirli bir package altındaki tüm class’ları bulur.
-     */
     private List<Class<?>> scanPackage(String basePackage) throws Exception {
         List<Class<?>> classes = new ArrayList<>();
         String path = basePackage.replace('.', '/');

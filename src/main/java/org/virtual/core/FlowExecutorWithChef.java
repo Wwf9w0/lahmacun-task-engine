@@ -24,7 +24,9 @@ public class FlowExecutorWithChef {
     public Map<String, TaskLahmacunResult<?>> execute() {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
 
-        for (FlowNode node : graph.getNodes()) submitNode(node, futures);
+        for (FlowNode node : graph.getNodes()) {
+            submitNode(node, futures);
+        }
 
         chef.waitAll(futures.values().toArray(new CompletableFuture[0]));
 
@@ -36,7 +38,9 @@ public class FlowExecutorWithChef {
 
     private void submitNode(FlowNode<?> node, Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures) {
 
-        if (futures.containsKey(node.getId())) return;
+        if (futures.containsKey(node.getId())) {
+            return;
+        }
 
         List<CompletableFuture<TaskLahmacunResult<?>>> depFutures = new ArrayList<>();
         for (FlowNode<?> prev : node.getPrevNodes()) {
@@ -49,7 +53,7 @@ public class FlowExecutorWithChef {
                 .thenCompose(ignored -> chef.oven().submit(() -> {
                     VirtualLahmacunTask<?> task = (VirtualLahmacunTask<?>) node.getTask().get();
                     List<TaskLahmacunResult<?>> taskResults = chef.run(Collections.singletonList(task));
-                    return taskResults.get(0);
+                    return taskResults.getFirst();
                 }));
 
         futures.put(node.getId(), future);
