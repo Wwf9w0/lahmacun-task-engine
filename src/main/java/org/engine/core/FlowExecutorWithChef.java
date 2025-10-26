@@ -5,7 +5,6 @@ import org.engine.dag.FlowNode;
 import org.engine.virtual.model.TaskLahmacunResult;
 import org.engine.virtual.model.VirtualLahmacunTask;
 
-import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -19,9 +18,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class FlowExecutorWithChef {
 
     private final FlowGraph graph;
-    private final VirtuaLahmacunlChef chef;
+    private final VirtualLahmacunChef chef;
 
-    public FlowExecutorWithChef(FlowGraph graph, VirtuaLahmacunlChef chef) {
+    public FlowExecutorWithChef(FlowGraph graph, VirtualLahmacunChef chef) {
         this.graph = graph;
         this.chef = chef;
     }

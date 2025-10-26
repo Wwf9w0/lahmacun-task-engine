@@ -6,13 +6,12 @@ import org.engine.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-public class VirtuaLahmacunlChef {
+public class VirtualLahmacunChef {
     private final VirtualThreadOven oven;
 
-    public VirtuaLahmacunlChef(VirtualThreadOven oven) {
+    public VirtualLahmacunChef(VirtualThreadOven oven) {
         this.oven = oven;
     }
 
