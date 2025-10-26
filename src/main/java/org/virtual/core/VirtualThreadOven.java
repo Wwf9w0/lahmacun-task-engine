@@ -16,10 +16,14 @@ public final class VirtualThreadOven implements AutoCloseable {
         return CompletableFuture.supplyAsync(task, executor);
     }
 
-    /*  public void waitAll(CompletableFuture<?>... futures) {
+      public void waitAll(CompletableFuture<?>... futures) {
           CompletableFuture.allOf(futures).join();
       }
-  */
+
+      public ExecutorService getExecutor() {
+        return executor;
+      }
+
     @Override
     public void close() throws Exception {
         executor.shutdown();

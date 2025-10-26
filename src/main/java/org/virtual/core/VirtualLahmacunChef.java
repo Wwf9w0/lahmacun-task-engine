@@ -6,6 +6,7 @@ import org.virtual.virtual.model.VirtualLahmacunTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class VirtualLahmacunChef {
@@ -43,7 +44,11 @@ public class VirtualLahmacunChef {
         return results;
     }
 
- /*   public void waitAll(CompletableFuture<?>... futures) {
+    public VirtualThreadOven oven() {
+        return this.oven;
+    }
+
+   public void waitAll(CompletableFuture<?>... futures) {
         oven.waitAll(futures);
-    } */
+    }
 }

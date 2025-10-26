@@ -5,18 +5,14 @@ import org.virtual.dag.FlowNode;
 import org.virtual.virtual.model.TaskLahmacunResult;
 import org.virtual.virtual.model.VirtualLahmacunTask;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
-
+import java.util.concurrent.CompletableFuture;
 
 public class FlowExecutorWithChef {
-
     private final FlowGraph graph;
     private final VirtualLahmacunChef chef;
 
@@ -26,34 +22,36 @@ public class FlowExecutorWithChef {
     }
 
     public Map<String, TaskLahmacunResult<?>> execute() {
+        Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
+
+        for (FlowNode node : graph.getNodes()) submitNode(node, futures);
+
+        chef.waitAll(futures.values().toArray(new CompletableFuture[0]));
+
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();
-        Set<FlowNode<?>> executed = new HashSet<>();
+        futures.forEach((nodeId, f) -> results.put(nodeId, f.join()));
 
-        Queue<FlowNode<?>> queue = new ConcurrentLinkedDeque<>(graph.getRoots());
-
-        while (!queue.isEmpty()) {
-            // TODO need refactor to FlowNode list
-            FlowNode<?> node = queue.poll();
-
-            boolean ready = executed.containsAll(node.getPrevNodes());
-            if (!ready) {
-                queue.offer(node);
-                continue;
-            }
-
-            VirtualLahmacunTask<?> task = new VirtualLahmacunTask<>(node.getTask());
-            List<TaskLahmacunResult<?>> taskResults = chef.run(Collections.singletonList(task));
-            TaskLahmacunResult<?> result = taskResults.get(0);
-
-            System.out.println("Executed node: " + node.getId() + " -> " + result.status());
-
-            results.put(node.getId(), result);
-            executed.add(node);
-            if (!node.getNextNodes().isEmpty()) {
-                queue.addAll(node.getNextNodes());
-            }
-            graph.getRoots().remove(node);
-        }
         return results;
+    }
+
+    private void submitNode(FlowNode<?> node, Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures) {
+
+        if (futures.containsKey(node.getId())) return;
+
+        List<CompletableFuture<TaskLahmacunResult<?>>> depFutures = new ArrayList<>();
+        for (FlowNode<?> prev : node.getPrevNodes()) {
+            submitNode(prev, futures);
+            depFutures.add(futures.get(prev.getId()));
+        }
+
+        CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
+                .allOf(depFutures.toArray(new CompletableFuture[0]))
+                .thenCompose(ignored -> chef.oven().submit(() -> {
+                    VirtualLahmacunTask<?> task = (VirtualLahmacunTask<?>) node.getTask().get();
+                    List<TaskLahmacunResult<?>> taskResults = chef.run(Collections.singletonList(task));
+                    return taskResults.get(0);
+                }));
+
+        futures.put(node.getId(), future);
     }
 }
