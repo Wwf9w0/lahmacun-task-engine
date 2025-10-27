@@ -3,6 +3,7 @@ package org.virtual.annotation;
 import org.virtual.dag.FlowGraph;
 import org.virtual.model.EventService;
 import org.virtual.core.VirtualLahmacunTask;
+import org.virtual.model.TaskType;
 
 public class EventFlowServiceExample {
 
@@ -13,6 +14,7 @@ public class EventFlowServiceExample {
     }
 
     @VirtualFlow
+    @FlowType(TaskType.IO)
     public FlowGraph getAllEvents() {
         FlowGraph graph = new FlowGraph();
         graph.addNode("TransformData", () -> new VirtualLahmacunTask<>(() -> "TransformData"));

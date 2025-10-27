@@ -1,8 +1,10 @@
 package org.virtual.core;
 
+import org.virtual.annotation.FlowType;
 import org.virtual.annotation.VirtualFlow;
 import org.virtual.dag.FlowGraph;
 import org.virtual.model.TaskLahmacunResult;
+import org.virtual.model.TaskType;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -16,34 +18,30 @@ public class VirtualLahmacunFlowRuntime {
         Assert.nonNull(basePackage, "Base package must not be null");
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
-        try (VirtualThreadOven oven = new VirtualThreadOven()) {
-            VirtualLahmacunChef chef = new VirtualLahmacunChef(oven);
-            for (Class<?> clazz : classes) {
-                if (clazz.isAnnotation() || clazz.isInterface()) {
-                    continue;
-                }
-                Object instance = clazz.getDeclaredConstructor().newInstance();
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (method.isAnnotationPresent(VirtualFlow.class)) {
-                        method.setAccessible(true);
-                        Object result = method.invoke(instance);
-                        if (!(result instanceof FlowGraph graph)) {
-                            throw new IllegalStateException("@" + VirtualFlow.class.getSimpleName()
-                                    + " method must return FlowGraph: " + method.getName());
-                        }
-                        FlowExecutorWithChef executor = new FlowExecutorWithChef(graph, chef);
-                        allResults.putAll(executor.execute());
+        for (Class<?> clazz : classes) {
+            if (clazz.isAnnotation() || clazz.isInterface()) {
+                continue;
+            }
+            Object instance = clazz.getDeclaredConstructor().newInstance();
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(VirtualFlow.class)) {
+                    method.setAccessible(true);
+                    Object result = method.invoke(instance);
+                    if (!(result instanceof FlowGraph graph)) {
+                        throw new IllegalStateException("@" + VirtualFlow.class.getSimpleName()
+                                + " method must return FlowGraph: " + method.getName());
                     }
+                    dynamicRun(method, allResults, graph);
                 }
             }
-            System.out.println("\n--- VirtualFlow Runtime Results ---");
-            allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result() + " | " + r.durationMillis()));
-            AtomicLong sum = new AtomicLong();
-            allResults.forEach((k, v) -> sum.addAndGet(v.durationMillis()));
-            System.out.println("Completed Flows -> " + sum + " ms");
-        } catch (Exception ignored) {
         }
+        System.out.println("\n--- VirtualFlow Runtime Results ---");
+        allResults.forEach((id, r) -> System.out.println(id + " -> " + r.status() + " | " + r.result() + " | " + r.durationMillis()));
+        AtomicLong sum = new AtomicLong();
+        allResults.forEach((k, v) -> sum.addAndGet(v.durationMillis()));
+        System.out.println("Completed Flows -> " + sum + " ms");
     }
+
 
     private List<Class<?>> scanPackage(String basePackage) throws Exception {
         List<Class<?>> classes = new ArrayList<>();
@@ -62,5 +60,24 @@ public class VirtualLahmacunFlowRuntime {
             }
         }
         return classes;
+    }
+
+    private Map<String, TaskLahmacunResult<?>> dynamicRun(Method method, Map<String, TaskLahmacunResult<?>> allResults, FlowGraph graph) throws Exception {
+        if (method.isAnnotationPresent(FlowType.class)) {
+            FlowType flowType = method.getAnnotation(FlowType.class);
+            TaskType taskType = flowType.value();
+            if (taskType == TaskType.IO) {
+                try (VirtualThreadOven oven = new VirtualThreadOven();) {
+                    FlowExecutorIOWithChef executorIOWithChef = new FlowExecutorIOWithChef(graph, oven);
+                    allResults.putAll(executorIOWithChef.execute());
+                }
+            } else {
+                try (DedicatedPoolThreadOven ddOven = new DedicatedPoolThreadOven();) {
+                    FlowExecutorCPUWithChef executorCPUWithChef = new FlowExecutorCPUWithChef(graph, ddOven);
+                    allResults.putAll(executorCPUWithChef.execute());
+                }
+            }
+        }
+        return allResults;
     }
 }
