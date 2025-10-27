@@ -29,7 +29,7 @@ The entire DAG is stored here.
 
 ```java
 FlowGraph graph = new FlowGraph();
-graph.addNode("FetchUsers", task);
+graph.addNode("FetchUsers", () -> task);
 graph.addEdge("FetchUsers", "TransformData");
 ```
 
