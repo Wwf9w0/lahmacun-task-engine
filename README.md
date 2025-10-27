@@ -33,7 +33,7 @@ graph.addNode("FetchUsers", () -> task);
 graph.addEdge("FetchUsers", "TransformData");
 ```
 
-* `addNode(String, Runnable)`: Adds a node.
+* `addNode(String, Supplier<T>)`: Adds a node.
 * `addEdge(String, String)`: Connects two nodes.
 * `validate()`: Validates the DAG and checks for cycles.
 * `hasCycle()`: Checks for cycles.
