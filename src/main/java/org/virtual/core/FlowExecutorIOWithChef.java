@@ -4,6 +4,8 @@ import org.virtual.dag.FlowGraph;
 import org.virtual.dag.FlowNode;
 import org.virtual.model.LahmacunTaskStatus;
 import org.virtual.model.TaskLahmacunResult;
+import org.virtual.queue.QueueManager;
+import org.virtual.model.QueuedTaskModel;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,20 +13,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class FlowExecutorIOWithChef {
+public class FlowExecutorIOWithChef<T> {
 
-    private final FlowGraph graph;
     private final VirtualThreadOven oven;
+    private final QueueManager<T> queueManager;
 
-    public FlowExecutorIOWithChef(FlowGraph graph, VirtualThreadOven oven) {
-        this.graph = graph;
+    public FlowExecutorIOWithChef(FlowGraph graph, VirtualThreadOven oven, QueueManager<T> queueManager) {
         this.oven = oven;
+        this.queueManager = queueManager;
     }
 
-    public Map<String, TaskLahmacunResult<?>> execute() {
+    public Map<String, TaskLahmacunResult<?>> execute(int process) {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
-        for (FlowNode<?> node : graph.getNodes()) {
-            submitNode(node, futures);
+        for (QueuedTaskModel<T> task : queueManager.pollAll(process)) {
+            submitNode(task.getNode(), futures);
         }
         oven.waitAll(futures.values().toArray(new CompletableFuture[0]));
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();
