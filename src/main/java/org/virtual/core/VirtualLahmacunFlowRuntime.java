@@ -3,16 +3,25 @@ package org.virtual.core;
 import org.virtual.annotation.FlowType;
 import org.virtual.annotation.VirtualFlow;
 import org.virtual.dag.FlowGraph;
+import org.virtual.dag.FlowNode;
 import org.virtual.model.TaskLahmacunResult;
 import org.virtual.model.TaskType;
+import org.virtual.queue.QueueManager;
+import org.virtual.queue.QueuedTask;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
-public class VirtualLahmacunFlowRuntime {
+public class VirtualLahmacunFlowRuntime<T> {
+    private final QueueManager queueManager;
+
+    public VirtualLahmacunFlowRuntime(QueueManager<T> queueManager) {
+        this.queueManager = queueManager;
+    }
 
     public void startAllFlows(String basePackage) throws Exception {
         Assert.nonNull(basePackage, "Base package must not be null");
@@ -68,8 +77,14 @@ public class VirtualLahmacunFlowRuntime {
             TaskType taskType = flowType.value();
             if (taskType == TaskType.IO) {
                 try (VirtualThreadOven oven = new VirtualThreadOven();) {
-                    FlowExecutorIOWithChef executorIOWithChef = new FlowExecutorIOWithChef(graph, oven);
-                    allResults.putAll(executorIOWithChef.execute());
+                    FlowExecutorIOWithChef<T> executorIOWithChef = new FlowExecutorIOWithChef<T>(graph, oven, queueManager);
+                    List<QueuedTask<T>> queuedTaskList = new ArrayList<>();
+                    for (FlowNode<?> f : graph.getNodes()) {
+                        QueuedTask<T> queuedTask = buildQueuedTask(f, TaskType.IO);
+                        queuedTaskList.add(queuedTask);
+                    }
+                    queueManager.put(queuedTaskList, 0);
+                    allResults.putAll(executorIOWithChef.execute(0));
                 }
             } else {
                 try (DedicatedPoolThreadOven ddOven = new DedicatedPoolThreadOven();) {
@@ -79,5 +94,10 @@ public class VirtualLahmacunFlowRuntime {
             }
         }
         return allResults;
+    }
+
+    public QueuedTask<T> buildQueuedTask(FlowNode<?> node, TaskType taskType) {
+        long submitTime = System.currentTimeMillis();
+        return new QueuedTask<T>(node, taskType, node.getId(), submitTime, 1);
     }
 }
