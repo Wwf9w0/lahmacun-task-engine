@@ -33,7 +33,7 @@ public class CPUTaskQueue<T> {
         return batch;
     }
 
-    public void putCpuQueue(List<QueuedTaskModel<T>> cpuQueueTask) {
+    public void offer(List<QueuedTaskModel<T>> cpuQueueTask) {
         try {
             for (QueuedTaskModel<T> queuedTask : cpuQueueTask) {
                 boolean push = cpuQueue.offer(queuedTask);
