@@ -1,4 +1,4 @@
-package org.virtual;
+/*package org.virtual;
 
 import org.virtual.core.VirtualLahmacunFlowRuntime;
 import org.virtual.queue.QueueManager;
@@ -12,7 +12,7 @@ public class Main<T> {
         System.out.println("Please enter the package name");
         String packageName = in.next();
         var queueManager = new QueueManager<>();
-        var runtime = new VirtualLahmacunFlowRuntime<>(queueManager);
-        runtime.startAllFlows(packageName);
+        var runtime = new VirtualLahmacunFlowRuntime<>();
+        runtime.startAllFlows();
     }
-}
+} */
