@@ -16,7 +16,7 @@ public class QueueManager<T> {
 
     public void put(List<QueuedTaskModel<T>>  queuedTask, int process) {
         if (process == 1) {
-            cpuTaskQueue.putCpuQueue(queuedTask);
+            cpuTaskQueue.offer(queuedTask);
         } else {
             ioTaskQueue.offer(queuedTask);
         }
