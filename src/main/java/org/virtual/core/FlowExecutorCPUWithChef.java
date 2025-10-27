@@ -3,7 +3,9 @@ package org.virtual.core;
 import org.virtual.dag.FlowGraph;
 import org.virtual.dag.FlowNode;
 import org.virtual.model.LahmacunTaskStatus;
+import org.virtual.model.QueuedTaskModel;
 import org.virtual.model.TaskLahmacunResult;
+import org.virtual.queue.QueueManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,20 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class FlowExecutorCPUWithChef {
+public class FlowExecutorCPUWithChef<T> {
 
-    private final FlowGraph graph;
     private final DedicatedPoolThreadOven ddOven;
+    private final QueueManager<T> queueManager;
 
-    public FlowExecutorCPUWithChef(FlowGraph graph, DedicatedPoolThreadOven ddOven) {
-        this.graph = graph;
+    public FlowExecutorCPUWithChef(DedicatedPoolThreadOven ddOven, QueueManager<T> queueManager) {
         this.ddOven = ddOven;
+        this.queueManager = queueManager;
     }
 
-    public Map<String, TaskLahmacunResult<?>> execute() {
+    public Map<String, TaskLahmacunResult<?>> execute(int process) {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new HashMap<>();
-        for (FlowNode<?> node : graph.getNodes()) {
-            submitNode(node, futures);
+        for (QueuedTaskModel<T> task  : queueManager.pollAll(process)) {
+            submitNode(task.getNode(), futures);
         }
         ddOven.waitAll(futures.values().toArray(new CompletableFuture[0]));
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();

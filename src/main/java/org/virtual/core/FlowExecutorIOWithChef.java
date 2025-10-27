@@ -18,7 +18,7 @@ public class FlowExecutorIOWithChef<T> {
     private final VirtualThreadOven oven;
     private final QueueManager<T> queueManager;
 
-    public FlowExecutorIOWithChef(FlowGraph graph, VirtualThreadOven oven, QueueManager<T> queueManager) {
+    public FlowExecutorIOWithChef(VirtualThreadOven oven, QueueManager<T> queueManager) {
         this.oven = oven;
         this.queueManager = queueManager;
     }

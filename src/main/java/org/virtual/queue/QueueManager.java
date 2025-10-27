@@ -24,7 +24,7 @@ public class QueueManager<T> {
 
     public List<QueuedTaskModel<T>> pollAll(int process) {
         if (process == 1) {
-            return cpuTaskQueue.takeAll();
+            return cpuTaskQueue.pollAll();
         } else {
             return ioTaskQueue.pollAll();
         }
