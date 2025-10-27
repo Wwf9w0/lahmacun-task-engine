@@ -24,17 +24,22 @@ public class CPUTaskQueue<T> {
         }
     }
 
-    public List<QueuedTaskModel<T>> takeAll() {
-        return new ArrayList<>(cpuQueue.size());
+    public List<QueuedTaskModel<T>> pollAll() {
+        List<QueuedTaskModel<T>> batch = new ArrayList<>();
+        QueuedTaskModel<T> task;
+        while ((task = poll()) != null) {
+            batch.add(task);
+        }
+        return batch;
     }
 
     public void putCpuQueue(List<QueuedTaskModel<T>> cpuQueueTask) {
         try {
             for (QueuedTaskModel<T> queuedTask : cpuQueueTask) {
-           boolean push = cpuQueue.offer(queuedTask);
-           if (!push) {
-               System.err.println("[IOTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
-           }
+                boolean push = cpuQueue.offer(queuedTask);
+                if (!push) {
+                    System.err.println("[IOTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

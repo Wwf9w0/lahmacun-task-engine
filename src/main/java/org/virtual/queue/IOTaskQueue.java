@@ -23,16 +23,21 @@ public class IOTaskQueue<T> {
     }
 
     public List<QueuedTaskModel<T>> pollAll() {
-        return new ArrayList<>(ioQueue.size());
+        List<QueuedTaskModel<T>> batch = new ArrayList<>();
+        QueuedTaskModel<T> task;
+        while ((task = pool()) != null) {
+            batch.add(task);
+        }
+        return batch;
     }
 
     public void offer(List<QueuedTaskModel<T>> ioQueueTasks) {
         for (QueuedTaskModel<T> queuedTask : ioQueueTasks) {
             try {
-             boolean push =  ioQueue.offer(queuedTask);
-             if (!push) {
-                 System.err.println("[CPUTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
-             }
+                boolean push = ioQueue.offer(queuedTask);
+                if (!push) {
+                    System.err.println("[CPUTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

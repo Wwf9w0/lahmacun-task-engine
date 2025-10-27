@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VirtualLahmacunFlowRuntime<T> {
-    private final QueueManager queueManager;
+    private final QueueManager<T> queueManager;
 
     public VirtualLahmacunFlowRuntime(QueueManager<T> queueManager) {
         this.queueManager = queueManager;
@@ -76,7 +76,7 @@ public class VirtualLahmacunFlowRuntime<T> {
             TaskType taskType = flowType.value();
             if (taskType == TaskType.IO) {
                 try (VirtualThreadOven oven = new VirtualThreadOven();) {
-                    FlowExecutorIOWithChef<T> executorIOWithChef = new FlowExecutorIOWithChef<T>(graph, oven, queueManager);
+                    FlowExecutorIOWithChef<T> executorIOWithChef = new FlowExecutorIOWithChef<T>(oven, queueManager);
                     List<QueuedTaskModel<T>> queuedTaskList = new ArrayList<>();
                     for (FlowNode<?> f : graph.getNodes()) {
                         QueuedTaskModel<T> queuedTask = buildQueuedTask(f, TaskType.IO);
@@ -87,8 +87,14 @@ public class VirtualLahmacunFlowRuntime<T> {
                 }
             } else {
                 try (DedicatedPoolThreadOven ddOven = new DedicatedPoolThreadOven();) {
-                    FlowExecutorCPUWithChef executorCPUWithChef = new FlowExecutorCPUWithChef(graph, ddOven);
-                    allResults.putAll(executorCPUWithChef.execute());
+                    FlowExecutorCPUWithChef<T> executorCPUWithChef = new FlowExecutorCPUWithChef<T>(ddOven, queueManager);
+                    List<QueuedTaskModel<T>> queuedTaskList = new ArrayList<>();
+                    for (FlowNode<?> f : graph.getNodes()) {
+                        QueuedTaskModel<T> queuedTask = buildQueuedTask(f, TaskType.CPU);
+                        queuedTaskList.add(queuedTask);
+                    }
+                    queueManager.put(queuedTaskList, 1);
+                    allResults.putAll(executorCPUWithChef.execute(1));
                 }
             }
         }
