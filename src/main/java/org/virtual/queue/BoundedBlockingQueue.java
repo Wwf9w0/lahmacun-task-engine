@@ -4,6 +4,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BoundedBlockingQueue<E> {
+
     private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
     private final AtomicInteger currentSize = new AtomicInteger(0);
     private final int capacity;

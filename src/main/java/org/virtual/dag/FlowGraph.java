@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class FlowGraph {
+
     private final Map<String, FlowNode<?>> nodes = new LinkedHashMap<>();
 
     public <T> void addNode(String id, Supplier<VirtualLahmacunTask<T>> task) {
