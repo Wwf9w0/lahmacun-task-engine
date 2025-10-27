@@ -1,15 +1,15 @@
-package org.virtual.queue;
+package org.engine.queue;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BoundedConcurrentDeque<E> {
+public class BoundedBlockingQueue<E> {
 
-    private final ConcurrentLinkedDeque<E> deque = new ConcurrentLinkedDeque<>();
+    private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
     private final AtomicInteger currentSize = new AtomicInteger(0);
     private final int capacity;
 
-    public BoundedConcurrentDeque(int capacity) {
+    public BoundedBlockingQueue(int capacity) {
         this.capacity = capacity;
     }
 
@@ -20,15 +20,14 @@ public class BoundedConcurrentDeque<E> {
                 return false;
             }
             if (currentSize.compareAndSet(size, size + 1)) {
-                deque.offer(e);
+                queue.offer(e);
                 return true;
             }
         }
-
     }
 
-    public E poll() throws InterruptedException{
-        E item = deque.poll();
+    public E poll() throws InterruptedException {
+        E item = queue.poll();
         if (item != null) {
             currentSize.decrementAndGet();
         }
@@ -36,14 +35,14 @@ public class BoundedConcurrentDeque<E> {
     }
 
     public int size() {
-        return deque.size();
+        return queue.size();
     }
 
-    public boolean isFUll() {
+    public boolean isFull() {
         return currentSize.get() >= capacity;
     }
 
     public boolean isEmpty() {
-        return currentSize.get() == 0;
+        return queue.isEmpty();
     }
 }

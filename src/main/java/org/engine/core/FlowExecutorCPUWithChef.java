@@ -1,33 +1,34 @@
-package org.virtual.core;
+package org.engine.core;
 
-import org.virtual.dag.FlowNode;
-import org.virtual.model.LahmacunTaskStatus;
-import org.virtual.model.TaskLahmacunResult;
-import org.virtual.queue.QueueManager;
-import org.virtual.model.QueuedTaskModel;
+import org.engine.dag.FlowNode;
+import org.engine.model.LahmacunTaskStatus;
+import org.engine.model.QueuedTaskModel;
+import org.engine.model.TaskLahmacunResult;
+import org.engine.queue.QueueManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class FlowExecutorIOWithChef<T> {
+public class FlowExecutorCPUWithChef<T> {
 
-    private final VirtualThreadOven oven;
+    private final DedicatedPoolThreadOven ddOven;
     private final QueueManager<T> queueManager;
 
-    public FlowExecutorIOWithChef(VirtualThreadOven oven, QueueManager<T> queueManager) {
-        this.oven = oven;
+    public FlowExecutorCPUWithChef(DedicatedPoolThreadOven ddOven, QueueManager<T> queueManager) {
+        this.ddOven = ddOven;
         this.queueManager = queueManager;
     }
 
     public Map<String, TaskLahmacunResult<?>> execute(int process) {
-        Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
-        for (QueuedTaskModel<T> task : queueManager.pollAll(process)) {
+        Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new HashMap<>();
+        for (QueuedTaskModel<T> task  : queueManager.pollAll(process)) {
             submitNode(task.getNode(), futures);
         }
-        oven.waitAll(futures.values().toArray(new CompletableFuture[0]));
+        ddOven.waitAll(futures.values().toArray(new CompletableFuture[0]));
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();
         futures.forEach((nodeId, f) -> results.put(nodeId, f.join()));
         return results;
@@ -47,7 +48,7 @@ public class FlowExecutorIOWithChef<T> {
         CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
                 .allOf(depFutures.toArray(new CompletableFuture[0]))
                 .thenCompose(ignored -> {
-                 return   node.getTask().get().run(oven)
+                    return node.getTask().get().ddRun(ddOven)
                             .thenApply(result -> new TaskLahmacunResult<>(
                                     node.getId(),
                                     LahmacunTaskStatus.SUCCESS,
@@ -58,3 +59,4 @@ public class FlowExecutorIOWithChef<T> {
         futures.put(node.getId(), future);
     }
 }
+
