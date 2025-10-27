@@ -13,15 +13,26 @@ public class FlowNode<T> {
     private final List<FlowNode<?>> nextNodes = new ArrayList<>();
     private final List<FlowNode<?>> prevNodes = new ArrayList<>();
 
-    public FlowNode(String id, Supplier<VirtualLahmacunTask<T>>  task) {
+    public FlowNode(String id, Supplier<VirtualLahmacunTask<T>> task) {
         this.id = id;
         this.task = task;
     }
 
-    public String getId() { return id; }
-    public Supplier<VirtualLahmacunTask<T>>  getTask() { return task; }
-    public List<FlowNode<?>> getNextNodes() { return nextNodes; }
-    public List<FlowNode<?>> getPrevNodes() { return prevNodes; }
+    public String getId() {
+        return id;
+    }
+
+    public Supplier<VirtualLahmacunTask<T>> getTask() {
+        return task;
+    }
+
+    public List<FlowNode<?>> getNextNodes() {
+        return nextNodes;
+    }
+
+    public List<FlowNode<?>> getPrevNodes() {
+        return prevNodes;
+    }
 
     public void addNextNode(FlowNode<?> next) {
         nextNodes.add(next);
