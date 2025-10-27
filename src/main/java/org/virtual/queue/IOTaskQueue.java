@@ -1,30 +1,41 @@
 package org.virtual.queue;
 
+import org.virtual.model.QueuedTaskModel;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class IOTaskQueue<T> {
-    private final BoundedConcurrentDeque<QueuedTask<T>> ioQueue;
+
+    private final BoundedConcurrentDeque<QueuedTaskModel<T>> ioQueue;
     private static final int IO_QUEUE_CAPACITY = 100_000;
 
     public IOTaskQueue() {
         this.ioQueue = new BoundedConcurrentDeque<>(IO_QUEUE_CAPACITY);
     }
 
-    public QueuedTask<T> pool() {
-        return ioQueue.poll();
+    public QueuedTaskModel<T> pool() {
+        try {
+            return ioQueue.poll();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<QueuedTask<T>> pollAll() {
+    public List<QueuedTaskModel<T>> pollAll() {
         return new ArrayList<>(ioQueue.size());
     }
 
-    public void offer(List<QueuedTask<T>> ioQueueTasks) {
-        for (QueuedTask<T> queuedTask : ioQueueTasks) {
-            ioQueue.offer(queuedTask);
+    public void offer(List<QueuedTaskModel<T>> ioQueueTasks) {
+        for (QueuedTaskModel<T> queuedTask : ioQueueTasks) {
+            try {
+             boolean push =  ioQueue.offer(queuedTask);
+             if (!push) {
+                 System.err.println("[CPUTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
+             }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

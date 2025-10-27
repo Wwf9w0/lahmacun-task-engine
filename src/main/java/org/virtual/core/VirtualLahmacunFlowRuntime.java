@@ -7,14 +7,13 @@ import org.virtual.dag.FlowNode;
 import org.virtual.model.TaskLahmacunResult;
 import org.virtual.model.TaskType;
 import org.virtual.queue.QueueManager;
-import org.virtual.queue.QueuedTask;
+import org.virtual.model.QueuedTaskModel;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
 
 public class VirtualLahmacunFlowRuntime<T> {
     private final QueueManager queueManager;
@@ -78,9 +77,9 @@ public class VirtualLahmacunFlowRuntime<T> {
             if (taskType == TaskType.IO) {
                 try (VirtualThreadOven oven = new VirtualThreadOven();) {
                     FlowExecutorIOWithChef<T> executorIOWithChef = new FlowExecutorIOWithChef<T>(graph, oven, queueManager);
-                    List<QueuedTask<T>> queuedTaskList = new ArrayList<>();
+                    List<QueuedTaskModel<T>> queuedTaskList = new ArrayList<>();
                     for (FlowNode<?> f : graph.getNodes()) {
-                        QueuedTask<T> queuedTask = buildQueuedTask(f, TaskType.IO);
+                        QueuedTaskModel<T> queuedTask = buildQueuedTask(f, TaskType.IO);
                         queuedTaskList.add(queuedTask);
                     }
                     queueManager.put(queuedTaskList, 0);
@@ -96,8 +95,8 @@ public class VirtualLahmacunFlowRuntime<T> {
         return allResults;
     }
 
-    public QueuedTask<T> buildQueuedTask(FlowNode<?> node, TaskType taskType) {
+    public QueuedTaskModel<T> buildQueuedTask(FlowNode<?> node, TaskType taskType) {
         long submitTime = System.currentTimeMillis();
-        return new QueuedTask<T>(node, taskType, node.getId(), submitTime, 1);
+        return new QueuedTaskModel<T>(node, taskType, node.getId(), submitTime, 1);
     }
 }

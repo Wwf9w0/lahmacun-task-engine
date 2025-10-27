@@ -5,7 +5,7 @@ import org.virtual.dag.FlowNode;
 import org.virtual.model.LahmacunTaskStatus;
 import org.virtual.model.TaskLahmacunResult;
 import org.virtual.queue.QueueManager;
-import org.virtual.queue.QueuedTask;
+import org.virtual.model.QueuedTaskModel;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,7 +25,7 @@ public class FlowExecutorIOWithChef<T> {
 
     public Map<String, TaskLahmacunResult<?>> execute(int process) {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
-        for (QueuedTask<T> task : queueManager.pollAll(process)) {
+        for (QueuedTaskModel<T> task : queueManager.pollAll(process)) {
             submitNode(task.getNode(), futures);
         }
         oven.waitAll(futures.values().toArray(new CompletableFuture[0]));

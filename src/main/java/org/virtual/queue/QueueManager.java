@@ -1,5 +1,7 @@
 package org.virtual.queue;
 
+import org.virtual.model.QueuedTaskModel;
+
 import java.util.List;
 
 public class QueueManager<T> {
@@ -12,7 +14,7 @@ public class QueueManager<T> {
         this.cpuTaskQueue = new CPUTaskQueue<>();
     }
 
-    public void put(List<QueuedTask<T>>  queuedTask, int process) {
+    public void put(List<QueuedTaskModel<T>>  queuedTask, int process) {
         if (process == 1) {
             cpuTaskQueue.putCpuQueue(queuedTask);
         } else {
@@ -20,7 +22,7 @@ public class QueueManager<T> {
         }
     }
 
-    public List<QueuedTask<T>> pollAll(int process) {
+    public List<QueuedTaskModel<T>> pollAll(int process) {
         if (process == 1) {
             return cpuTaskQueue.takeAll();
         } else {

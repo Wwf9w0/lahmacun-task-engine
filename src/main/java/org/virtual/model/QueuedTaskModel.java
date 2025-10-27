@@ -1,17 +1,16 @@
-package org.virtual.queue;
+package org.virtual.model;
 
-import org.virtual.core.VirtualLahmacunTask;
 import org.virtual.dag.FlowNode;
-import org.virtual.model.TaskType;
 
-public class QueuedTask<T> {
+public class QueuedTaskModel<T> {
+
     private FlowNode<?> node;
-    private  TaskType type;
-    private  String nodeId;
-    private  long submitTime;
-    private  int priority;
+    private TaskType type;
+    private String nodeId;
+    private long submitTime;
+    private int priority;
 
-    public QueuedTask(FlowNode<?>  node, TaskType type,String nodeId, long submitTime,  int priority) {
+    public QueuedTaskModel(FlowNode<?> node, TaskType type, String nodeId, long submitTime, int priority) {
         this.node = node;
         this.type = type;
         this.nodeId = nodeId;
@@ -43,7 +42,7 @@ public class QueuedTask<T> {
         this.type = type;
     }
 
-    public FlowNode<?>  getNode() {
+    public FlowNode<?> getNode() {
         return node;
     }
 
