@@ -1,6 +1,7 @@
 package org.virtual.model;
 
 public final class TaskLahmacunResult<T> {
+
     private final String name;
     private final LahmacunTaskStatus status;
     private final T result;

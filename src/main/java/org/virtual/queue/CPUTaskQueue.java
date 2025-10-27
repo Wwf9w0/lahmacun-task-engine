@@ -9,7 +9,6 @@ public class CPUTaskQueue<T> {
 
     private final BoundedBlockingQueue<QueuedTaskModel<T>> cpuQueue;
     private static final int CPU_QUEUE_CAPACITY = Runtime.getRuntime().availableProcessors() * 1000;
-    //16 core → 16,000 task
 
     public CPUTaskQueue() {
         this.cpuQueue = new BoundedBlockingQueue<>(CPU_QUEUE_CAPACITY);
