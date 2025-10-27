@@ -2,23 +2,23 @@ package org.virtual.core;
 
 import org.virtual.dag.FlowGraph;
 import org.virtual.dag.FlowNode;
+import org.virtual.model.LahmacunTaskStatus;
 import org.virtual.model.TaskLahmacunResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class FlowExecutorWithChef {
+public class FlowExecutorIOWithChef {
 
     private final FlowGraph graph;
-    private final VirtualLahmacunChef chef;
+    private final VirtualThreadOven oven;
 
-    public FlowExecutorWithChef(FlowGraph graph, VirtualLahmacunChef chef) {
+    public FlowExecutorIOWithChef(FlowGraph graph, VirtualThreadOven oven) {
         this.graph = graph;
-        this.chef = chef;
+        this.oven = oven;
     }
 
     public Map<String, TaskLahmacunResult<?>> execute() {
@@ -26,7 +26,7 @@ public class FlowExecutorWithChef {
         for (FlowNode<?> node : graph.getNodes()) {
             submitNode(node, futures);
         }
-        chef.waitAll(futures.values().toArray(new CompletableFuture[0]));
+        oven.waitAll(futures.values().toArray(new CompletableFuture[0]));
         Map<String, TaskLahmacunResult<?>> results = new LinkedHashMap<>();
         futures.forEach((nodeId, f) -> results.put(nodeId, f.join()));
         return results;
@@ -45,11 +45,15 @@ public class FlowExecutorWithChef {
         }
         CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
                 .allOf(depFutures.toArray(new CompletableFuture[0]))
-                .thenCompose(ignored -> chef.oven().submit(() -> {
-                    VirtualLahmacunTask<?> task = node.getTask().get();
-                    List<TaskLahmacunResult<?>> taskResults = chef.run(Collections.singletonList(task));
-                    return taskResults.getFirst();
-                }));
+                .thenCompose(ignored -> {
+                 return   node.getTask().get().run(oven)
+                            .thenApply(result -> new TaskLahmacunResult<>(
+                                    node.getId(),
+                                    LahmacunTaskStatus.SUCCESS,
+                                    result,
+                                    null,
+                                    0));
+                });
         futures.put(node.getId(), future);
     }
 }

@@ -1,6 +1,7 @@
 package org.virtual.annotation;
 
 import org.virtual.dag.FlowGraph;
+import org.virtual.model.TaskType;
 import org.virtual.model.UserService;
 import org.virtual.core.VirtualLahmacunTask;
 
@@ -13,6 +14,7 @@ public class UserFlowServiceExample {
     }
 
     @VirtualFlow
+    @FlowType(TaskType.CPU)
     public FlowGraph userTaskGraph() {
         FlowGraph graph = new FlowGraph();
         graph.addNode("FetchUsersProfile", () -> new VirtualLahmacunTask<>(userService::getProfile));
