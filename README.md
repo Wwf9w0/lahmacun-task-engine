@@ -48,7 +48,7 @@ FetchUsers -> SendNotification
 ```
 
 * `FetchUsers` is the root node.
-* `TransformData` depends on `PushToDB`.
+* `PushToDB` depends on `TransformData`.
 * `SendNotification` runs independently after `FetchUsers`.
 
 ### Code Example
