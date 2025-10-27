@@ -1,6 +1,6 @@
-package org.virtual.queue;
+package org.engine.queue;
 
-import org.virtual.model.QueuedTaskModel;
+import org.engine.model.QueuedTaskModel;
 
 import java.util.List;
 

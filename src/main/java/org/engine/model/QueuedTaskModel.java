@@ -1,6 +1,6 @@
-package org.virtual.model;
+package org.engine.model;
 
-import org.virtual.dag.FlowNode;
+import org.engine.dag.FlowNode;
 
 public class QueuedTaskModel<T> {
 
