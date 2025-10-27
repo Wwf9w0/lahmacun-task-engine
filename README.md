@@ -35,7 +35,6 @@ graph.addEdge("FetchUsers", "TransformData");
 
 * `addNode(String, Runnable)`: Adds a node.
 * `addEdge(String, String)`: Connects two nodes.
-* `getRoots()`: Returns root nodes without any previous nodes.
 * `validate()`: Validates the DAG and checks for cycles.
 * `hasCycle()`: Checks for cycles.
 
@@ -67,20 +66,21 @@ graph.addEdge("TransformData", "PushToDB");
 
 graph.validate();
 
-System.out.println("Roots: " + graph.getRoots());
-for (FlowNode node : graph.getNodes()) {
-    System.out.println(node);
-}
+return graph;
+
 ```
 
 ### Expected Output
 
 ```
-Roots: [FlowNode{id='FetchUsers', next=[TransformData, SendNotification]}]
-FlowNode{id='FetchUsers', next=[TransformData, SendNotification]}
-FlowNode{id='TransformData', next=[PushToDB]}
-FlowNode{id='PushToDB', next=[]}
-FlowNode{id='SendNotification', next=[]}
+--- VirtualFlow Runtime Results ---
+FetchUsersProfile -> SUCCESS | UserProfile[userName=emre, email=emre@gmail.com] | 0
+TransformData -> SUCCESS | TransformData | 0
+PushToDB -> SUCCESS | Data pushed to DB | 0
+SendNotification -> SUCCESS | Notification sent | 0
+EventList -> SUCCESS | [Event[name=event1, time=1], Event[name=event2, time=2]] | 0
+Completed Flows -> 0 ms
+
 ```
 
 ---
