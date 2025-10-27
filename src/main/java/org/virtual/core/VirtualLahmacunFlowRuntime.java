@@ -1,5 +1,6 @@
 package org.virtual.core;
 
+import org.springframework.context.ApplicationContext;
 import org.virtual.annotation.FlowType;
 import org.virtual.annotation.VirtualFlow;
 import org.virtual.dag.FlowGraph;
@@ -17,12 +18,15 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class VirtualLahmacunFlowRuntime<T> {
     private final QueueManager<T> queueManager;
+    private final ApplicationContext  applicationContext;
 
-    public VirtualLahmacunFlowRuntime(QueueManager<T> queueManager) {
+    public VirtualLahmacunFlowRuntime(QueueManager<T> queueManager, ApplicationContext applicationContext) {
         this.queueManager = queueManager;
+        this.applicationContext = applicationContext;
     }
 
-    public void startAllFlows(String basePackage) throws Exception {
+    public void startAllFlows() throws Exception {
+        var basePackage = applicationContext.getEnvironment().getClass().getPackage().getName();
         Assert.nonNull(basePackage, "Base package must not be null");
         List<Class<?>> classes = scanPackage(basePackage);
         Map<String, TaskLahmacunResult<?>> allResults = new LinkedHashMap<>();
