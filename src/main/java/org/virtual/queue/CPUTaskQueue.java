@@ -2,15 +2,16 @@ package org.virtual.queue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class CPUTaskQueue<T> {
     private final BlockingQueue<QueuedTask<T>> cpuQueue;
+    private static final int CPU_QUEUE_CAPACITY = Runtime.getRuntime().availableProcessors() * 1000;
+    //16 core → 16,000 task
 
     public CPUTaskQueue() {
-        this.cpuQueue = new LinkedBlockingQueue<>();
+        this.cpuQueue = new LinkedBlockingQueue<>(CPU_QUEUE_CAPACITY);
     }
 
     public QueuedTask<T> take() {

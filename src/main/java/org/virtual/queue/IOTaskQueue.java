@@ -1,15 +1,17 @@
 package org.virtual.queue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class IOTaskQueue<T> {
-    private final Queue<QueuedTask<T>> ioQueue;
+    private final BoundedConcurrentDeque<QueuedTask<T>> ioQueue;
+    private static final int IO_QUEUE_CAPACITY = 100_000;
 
     public IOTaskQueue() {
-        this.ioQueue = new ConcurrentLinkedDeque<>();
+        this.ioQueue = new BoundedConcurrentDeque<>(IO_QUEUE_CAPACITY);
     }
 
     public QueuedTask<T> pool() {
@@ -17,7 +19,7 @@ public class IOTaskQueue<T> {
     }
 
     public List<QueuedTask<T>> pollAll() {
-        return new ArrayList<>(ioQueue);
+        return new ArrayList<>(ioQueue.size());
     }
 
     public void offer(List<QueuedTask<T>> ioQueueTasks) {

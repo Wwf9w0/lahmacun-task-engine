@@ -4,9 +4,7 @@ import java.util.List;
 
 public class QueueManager<T> {
 
-    private QueuedTask<T> queuedTask;
     private final IOTaskQueue<T> ioTaskQueue;
-    ;
     private final CPUTaskQueue<T> cpuTaskQueue;
 
     public QueueManager() {
