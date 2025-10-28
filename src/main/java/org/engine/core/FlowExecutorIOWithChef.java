@@ -22,9 +22,9 @@ public class FlowExecutorIOWithChef<T> {
         this.queueManager = queueManager;
     }
 
-    public Map<String, TaskLahmacunResult<?>> execute(int process) {
+    public Map<String, TaskLahmacunResult<?>> execute(int process, int root) {
         Map<String, CompletableFuture<TaskLahmacunResult<?>>> futures = new LinkedHashMap<>();
-        for (QueuedTaskModel<T> task : queueManager.pollAll(process)) {
+        for (QueuedTaskModel<T> task : queueManager.pollAll(process, root)) {
             submitNode(task.getNode(), futures);
         }
         oven.waitAll(futures.values().toArray(new CompletableFuture[0]));
@@ -44,17 +44,23 @@ public class FlowExecutorIOWithChef<T> {
             submitNode(prev, futures);
             depFutures.add(futures.get(prev.getId()));
         }
-        CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
-                .allOf(depFutures.toArray(new CompletableFuture[0]))
-                .thenCompose(ignored -> {
-                 return   node.getTask().get().run(oven)
-                            .thenApply(result -> new TaskLahmacunResult<>(
-                                    node.getId(),
-                                    LahmacunTaskStatus.SUCCESS,
-                                    result,
-                                    null,
-                                    0));
-                });
-        futures.put(node.getId(), future);
+        try {
+            CompletableFuture<TaskLahmacunResult<?>> future = CompletableFuture
+                    .allOf(depFutures.toArray(new CompletableFuture[0]))
+                    .thenCompose(ignored -> {
+                        return node.getTask().get().run(oven)
+                                .thenApply(result -> new TaskLahmacunResult<>(
+                                        node.getId(),
+                                        LahmacunTaskStatus.SUCCESS,
+                                        result,
+                                        null,
+                                        0));
+                    });
+            futures.put(node.getId(), future);
+        } catch (Exception e) {
+            System.err.println("[Node] Node could not be submitted and I/O run" + e.getMessage());
+            new TaskLahmacunResult<>(node.getId(), LahmacunTaskStatus.FAILED, e.getMessage(), null, 0);
+        }
+
     }
 }

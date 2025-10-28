@@ -1,6 +1,7 @@
 package org.engine.queue;
 
 import org.engine.model.QueuedTaskModel;
+import org.engine.queue.external.ExternalIOQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +9,12 @@ import java.util.List;
 public class IOTaskQueue<T> {
 
     private final BoundedConcurrentDeque<QueuedTaskModel<T>> ioQueue;
+    private final ExternalIOQueue<T> ioExternalQueue;
     private static final int IO_QUEUE_CAPACITY = 100_000;
 
     public IOTaskQueue() {
         this.ioQueue = new BoundedConcurrentDeque<>(IO_QUEUE_CAPACITY);
+        this.ioExternalQueue = new ExternalIOQueue<>();
     }
 
     public QueuedTaskModel<T> pool() {
@@ -31,16 +34,19 @@ public class IOTaskQueue<T> {
         return batch;
     }
 
-    public void offer(List<QueuedTaskModel<T>> ioQueueTasks) {
+    public int offer(List<QueuedTaskModel<T>> ioQueueTasks) {
         for (QueuedTaskModel<T> queuedTask : ioQueueTasks) {
             try {
                 boolean push = ioQueue.offer(queuedTask);
                 if (!push) {
-                    System.err.println("[CPUTaskQueue] Queue is full. Task rejected: " + queuedTask.getNodeId());
+                    ioExternalQueue.offer(ioQueueTasks);
+                    System.out.println("[IOTaskQueue] Queue is full. Task sent to external Queue -> [IOExternalQueue] : " + queuedTask.getNodeId());
+                    return 0;
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
+        return 1;
     }
 }
