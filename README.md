@@ -6,6 +6,10 @@ VirtualFlow is a Java-based DAG (Directed Acyclic Graph) task execution system. 
 
 This project models nodes and their dependencies to manage workflows. Cycle detection and root node identification guarantee the DAG's validity.
 
+VirtualFlow uses Virtual Thread and Thread Pool simultaneously. For I/O-bound tasks such as database connections, HTTP requests, or insert and delete operations, it use VirtualThread (Executors.newThreadPerTaskExecutor(factory)).
+
+For CPU-bound tasks (data & model processing, image processing), it uses Thread Pool (Executors.newFixedThreadPool(maxThreads)).
+
 ---
 ##  Installation
 
