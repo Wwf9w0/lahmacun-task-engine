@@ -9,13 +9,23 @@ public class QueuedTaskModel<T> {
     private String nodeId;
     private long submitTime;
     private int priority;
+    private int rootQueue;
 
-    public QueuedTaskModel(FlowNode<?> node, TaskType type, String nodeId, long submitTime, int priority) {
+    public QueuedTaskModel(FlowNode<?> node, TaskType type, String nodeId, long submitTime, int priority, int rootQueue) {
         this.node = node;
         this.type = type;
         this.nodeId = nodeId;
         this.submitTime = submitTime;
         this.priority = priority;
+        this.rootQueue = rootQueue;
+    }
+
+    public void setRootQueue(int rootQueue) {
+        this.rootQueue = rootQueue;
+    }
+
+    public int rootQueue() {
+        return rootQueue;
     }
 
     public int getPriority() {
