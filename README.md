@@ -1,4 +1,4 @@
-# VirtualFlow 🌊
+# VirtualFlow 
 
 ## Description
 
@@ -7,88 +7,175 @@ VirtualFlow is a Java-based DAG (Directed Acyclic Graph) task execution system. 
 This project models nodes and their dependencies to manage workflows. Cycle detection and root node identification guarantee the DAG's validity.
 
 ---
+##  Installation
 
+```java
+        <dependency>
+            <groupId>org.engine</groupId>
+            <artifactId>lahmacun-virtual-core</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+```
+
+Spring Boot Configuration
+
+Add these beans to your configuration class:
+
+```java
+    @Bean
+    public QueueManager<Object> queueManager() {
+        return new QueueManager<>();
+    }
+
+    @Bean
+    public VirtualLahmacunRuntimeExecutor<?> virtualLahmacunFlowRuntimeExecutor() {
+        return new VirtualLahmacunRuntimeExecutor<>(queueManager());
+    }
+```
+
+Then inject and use:
+
+private final VirtualLahmacunRuntimeExecutor<?> virtualLahmacunRuntimeExecutor;
+```java
+public void processFlow(FlowGraph graph, int type) {
+try {
+virtualLahmacunRuntimeExecutor.startAllFlows(graph, type);
+} catch (Exception e) {
+System.err.println("[ProcessFlow] couldn't run! " + e.getMessage());
+}
+}
+```
 ## FlowGraph Structure
 
-### 1️⃣ FlowNode
+### 1-️ FlowNode
 
 Each task is represented by a `FlowNode`.
+
+ Core Concepts
+
+
+Represents an individual unit of work.
 
 ```java
 FlowNode node = new FlowNode("FetchUsers", () -> System.out.println("Fetching users..."));
 ```
 
-* `id`: Unique identifier for the node.
-* `task`: Runnable task to execute.
-* `nextNodes`: Nodes that run after this node.
-* `prevNodes`: Nodes that ran before this node.
-
-### 2️⃣ FlowGraph
-
-The entire DAG is stored here.
-
+Properties:
 ```java
-FlowGraph graph = new FlowGraph();
-graph.addNode("FetchUsers", () -> task);
-graph.addEdge("FetchUsers", "TransformData");
+id: Unique identifier of the node
+
+task: Runnable or Supplier task to execute
+
+nextNodes: Dependent nodes
+
+prevNodes: Dependencies
 ```
 
-* `addNode(String, Supplier<T>)`: Adds a node.
-* `addEdge(String, String)`: Connects two nodes.
-* `validate()`: Validates the DAG and checks for cycles.
-* `hasCycle()`: Checks for cycles.
+### 2- FlowGraph
 
----
+Represents the entire DAG (Directed Acyclic Graph).
 
-## Example DAG and Dependencies
+```java
+Key Methods:
+
+addNode(String, Supplier<T>): Adds a node
+
+addEdge(String, String): Connects dependencies
+
+validate(): Ensures no cycles exist
+
+hasCycle(): Detects cycles
+```
+
+### 3- Example DAG
 
 ```java
 FetchUsers -> TransformData -> PushToDB
 FetchUsers -> SendNotification
+
+
+FetchUsers is the root node.
+
+PushToDB depends on TransformData.
 ```
+SendNotification executes independently after FetchUsers.
 
-* `FetchUsers` is the root node.
-* `PushToDB` depends on `TransformData`.
-* `SendNotification` runs independently after `FetchUsers`.
-
-### Code Example
+### 4- Example Code
 
 ```java
-FlowGraph graph = new FlowGraph();
-graph.addNode("FetchUsers", () -> System.out.println("Fetching users..."));
-graph.addNode("TransformData", () -> System.out.println("Transforming data..."));
-graph.addNode("PushToDB", () -> System.out.println("Pushing data to DB..."));
-graph.addNode("SendNotification", () -> System.out.println("Sending notification..."));
+public void buildFlowGraph() {
+    System.out.println("Flow starting...");
 
-graph.addEdge("FetchUsers", "TransformData");
-graph.addEdge("FetchUsers", "SendNotification");
-graph.addEdge("TransformData", "PushToDB");
+    UserLocationRequest request = new UserLocationRequest();
+    request.setMemberNo("123");
+    request.setLatitude(3.3);
+    request.setLongitude(3.3);
+    request.setTimestamp(System.currentTimeMillis());
 
-graph.validate();
+    FlowGraph graph = new FlowGraph();
+    graph.addNode("FindUser", () -> new VirtualLahmacunTask<>(() ->
+            userLocationService.findNearestUsers(request.getLongitude(), request.getLatitude(), 5)));
+    graph.addNode("ProcessUserLocation", () -> new VirtualLahmacunTask<>(() ->
+            userLocationService.processUserLocation(request)));
+    graph.addNode("SendToWebSocket", () -> new VirtualLahmacunTask<>(() ->
+            userLocationService.sendUserLocationFromWebSocket(request)));
 
-return graph;
+    graph.validate();
+    graph.addEdge("FindUser", "ProcessUserLocation");
+    graph.addEdge("FindUser", "SendToWebSocket");
 
+    System.out.println("Graph nodes: " + graph.getNodes());
+    System.out.println("Flow ending...");
+
+    lahmacunFlowService.processFlow(graph, 0);
+}
 ```
 
-### Expected Output
+### 5- Example Output
 
-```
+```java
 --- VirtualFlow Runtime Results ---
-FetchUsersProfile -> SUCCESS | UserProfile[userName=emre, email=emre@gmail.com] | 0
-TransformData -> SUCCESS | TransformData | 0
-PushToDB -> SUCCESS | Data pushed to DB | 0
-SendNotification -> SUCCESS | Notification sent | 0
-EventList -> SUCCESS | [Event[name=event1, time=1], Event[name=event2, time=2]] | 0
+FindUser -> SUCCESS | [UserLocationResponse(...)] | 0
+ProcessUserLocation -> SUCCESS | true | 0
+SendToWebSocket -> SUCCESS | true | 0
 Completed Flows -> 0 ms
+```
+
+### 6- Architecture Overview
+
+```java
+Component	Description
+FlowGraph	Stores DAG nodes and edges
+FlowNode	Represents a single executable task
+VirtualThreadOven	Handles IO-bound virtual thread tasks
+DedicatedPoolThreadOven	Manages CPU-bound thread pool tasks
+TaskQueue (CPU/IO)	Manages queued tasks concurrently
+VirtualLahmacunRuntimeExecutor	Orchestrates all task execution and flow logic
+```
+
+### 7- Technologies
+
+```java
+Java 21 (Project Loom)
+
+Virtual Threads
+
+CompletableFuture
+
+BlockingQueue / ConcurrentLinkedDeque
 
 ```
 
----
+### 8- Notes
 
-## Notes
+```java
+Uses LinkedHashMap to preserve task order
 
-* Using `LinkedHashMap` preserves insertion order.
-* `validate()` checks the DAG for cycles.
-* Nodes should be added in a dependency-respecting order to ensure correct execution.
+validate() ensures DAG integrity
 
----
+Tasks execute in parallel when dependencies are ready
+
+Built-in timeout and concurrency control
+
+Handles millions of tasks efficiently
+```
