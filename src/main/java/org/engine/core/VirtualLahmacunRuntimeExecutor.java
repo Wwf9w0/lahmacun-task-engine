@@ -36,25 +36,34 @@ public class VirtualLahmacunRuntimeExecutor<T> {
         if (type == 1) {
             try (DedicatedPoolThreadOven ddOven = new DedicatedPoolThreadOven();) {
                 FlowExecutorCPUWithChef<T> executorCPUWithChef = new FlowExecutorCPUWithChef<T>(ddOven, queueManager);
+                ExternalCPUChef<T> externalCPUChef = new ExternalCPUChef<>(executorCPUWithChef);
                 List<QueuedTaskModel<T>> queuedTaskList = new ArrayList<>();
                 for (FlowNode<?> f : graph.getNodes()) {
                     QueuedTaskModel<T> queuedTask = buildQueuedTask(f, TaskType.CPU);
                     queuedTaskList.add(queuedTask);
                 }
-                queueManager.put(queuedTaskList, 1);
-                allResults.putAll(executorCPUWithChef.execute(1));
+                int queueType = queueManager.put(queuedTaskList, 1);
+                if (queueType == 1) {
+                    allResults.putAll(executorCPUWithChef.execute(1, 1));
+                } else {
+                    allResults.putAll(externalCPUChef.execute(1, 0));
+                }
             }
         } else {
             try (VirtualThreadOven oven = new VirtualThreadOven();) {
                 FlowExecutorIOWithChef<T> executorIOWithChef = new FlowExecutorIOWithChef<T>(oven, queueManager);
+                ExternalIOChef<T> externalIOChef = new ExternalIOChef<>(executorIOWithChef);
                 List<QueuedTaskModel<T>> queuedTaskList = new ArrayList<>();
                 for (FlowNode<?> f : graph.getNodes()) {
                     QueuedTaskModel<T> queuedTask = buildQueuedTask(f, TaskType.IO);
                     queuedTaskList.add(queuedTask);
                 }
-                queueManager.put(queuedTaskList, 0);
-                allResults.putAll(executorIOWithChef.execute(0));
-
+                int queueType = queueManager.put(queuedTaskList, 0);
+                if (queueType == 1) {
+                    allResults.putAll(executorIOWithChef.execute(0, 1));
+                } else {
+                    allResults.putAll(externalIOChef.execute(0, 0));
+                }
             }
         }
         return allResults;
@@ -62,6 +71,6 @@ public class VirtualLahmacunRuntimeExecutor<T> {
 
     public QueuedTaskModel<T> buildQueuedTask(FlowNode<?> node, TaskType taskType) {
         long submitTime = System.currentTimeMillis();
-        return new QueuedTaskModel<T>(node, taskType, node.getId(), submitTime, 1);
+        return new QueuedTaskModel<T>(node, taskType, node.getId(), submitTime, 1, 1);
     }
 }
