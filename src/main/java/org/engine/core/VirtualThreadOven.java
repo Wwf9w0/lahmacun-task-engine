@@ -15,7 +15,6 @@ public final class VirtualThreadOven implements AutoCloseable {
     public VirtualThreadOven() {
         ThreadFactory factory = new ThreadFactory() {
             private final AtomicInteger count = new AtomicInteger(0);
-
             @Override
             public Thread newThread(Runnable r) {
                 if (count.incrementAndGet() > MAX_THREAD) {
@@ -36,7 +35,6 @@ public final class VirtualThreadOven implements AutoCloseable {
     public void waitAll(CompletableFuture<?>... futures) {
         CompletableFuture.allOf(futures).join();
     }
-
 
     @Override
     public void close() {
