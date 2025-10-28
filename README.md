@@ -125,10 +125,27 @@ public void buildFlowGraph() {
     graph.addEdge("FindUser", "SendToWebSocket");
 
     System.out.println("Graph nodes: " + graph.getNodes());
-    System.out.println("Flow ending...");
-
     lahmacunFlowService.processFlow(graph, 0);
+    System.out.println("Flow ending...");
 }
+```
+
+Without VirtualFlow
+```java
+        long start = System.currentTimeMillis();
+        System.out.println("Flow starting.... withouw flow");
+        UserLocationRequest request = new UserLocationRequest();
+        request.setMemberNo("123");
+        request.setLatitude(3.3);
+        request.setLongitude(3.3);
+        request.setTimestamp(System.currentTimeMillis());
+        
+        userLocationService.findNearestUsers2(request.getLongitude(), request.getLatitude(), 5);
+        userLocationService.processUserLocation2(request);
+        userLocationService.sendUserLocationFromWebSocket2(request);
+        long end = System.currentTimeMillis() - start;
+        System.out.println("Flow ending.... " + end + ": ms");
+
 ```
 
 ### 5- Example Output
@@ -140,7 +157,11 @@ ProcessUserLocation -> SUCCESS | true | 0
 SendToWebSocket -> SUCCESS | true | 0
 Completed Flows -> 0 ms
 ```
-
+Example Output Without lahmacun
+```java
+Flow starting....
+Flow ending.... 21 ms
+```
 ### 6- Architecture Overview
 
 ```java
