@@ -125,9 +125,8 @@ public void buildFlowGraph() {
     graph.addEdge("FindUser", "SendToWebSocket");
 
     System.out.println("Graph nodes: " + graph.getNodes());
-    System.out.println("Flow ending...");
-
     lahmacunFlowService.processFlow(graph, 0);
+    System.out.println("Flow ending...");
 }
 ```
 
@@ -161,7 +160,7 @@ Completed Flows -> 0 ms
 Example Output Without lahmacun
 ```java
 Flow starting....
-Flow ending.... 21: ms
+Flow ending.... 21 ms
 ```
 ### 6- Architecture Overview
 
